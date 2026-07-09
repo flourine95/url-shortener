@@ -1,7 +1,3 @@
----
-meta.contentType: Reference
----
-
 # Benchmark methodology and performance results
 
 This document describes the load testing methodology, parameters, and comparison of the architectural revisions.

@@ -1,7 +1,3 @@
----
-meta.contentType: Reference
----
-
 # URL shortener architectural evolutions
 
 This document details the software development steps and architectural differences across the four tagged milestones.

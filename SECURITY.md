@@ -1,7 +1,3 @@
----
-meta.contentType: Reference
----
-
 # Security policy
 
 ## Supported versions

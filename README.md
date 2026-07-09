@@ -1,12 +1,8 @@
----
-meta.contentType: How-to
----
-
 # Benchmark URL shortener architecture
 
 This guide explains the architecture, package layout, and instructions for building, running, and benchmarking the URL shortener evolutions.
 
-The application uses **Spring Boot 4** and **Java 21**, following **Hexagonal Architecture (Ports and Adapters)**, **Domain-Driven Design (DDD)**, and the **Nitrotech API Layered Architecture** standards.
+The application uses **Spring Boot 4** and **Java 21**, following **Hexagonal Architecture (Ports and Adapters)**, **Domain-Driven Design (DDD)**, and **Clean Layered Architecture** standards.
 
 You can benchmark four architectural evolutions of the URL shortener side-by-side in isolated containerized environments.
 
@@ -23,7 +19,7 @@ Spring Profiles toggle the active URL shortener versions dynamically from a sing
 
 ## Package layout
 
-The project follows the Nitrotech API standard and organizes files into four layers:
+The project follows standard layered clean architecture and organizes files into four layers:
 
 - **`application/`** (Driving Adapters): Contains REST controllers and HTTP request and response DTOs.
 - **`domain/`** (Business Logic Core): Defines pure domain models, command and query DTOs, and use case interfaces (input ports).
