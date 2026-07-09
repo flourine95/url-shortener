@@ -1,8 +1,8 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 COPY . .
-# Ensure gradlew has execution permission
-RUN chmod +x gradlew
+# Ensure gradlew has Linux line endings and execution permission
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew
 RUN ./gradlew bootJar --no-daemon -x test
 
 FROM eclipse-temurin:21-jre-alpine
