@@ -36,3 +36,5 @@ Replaces synchronous database writes with Kafka event publishing. The redirect h
 - **Analytics**: `KafkaAnalyticsAdapter` implements `AnalyticsPort`. It publishes visit JSON payloads to the `url-analytics` Kafka topic and returns without waiting for persistence
 - **Consumer**: `KafkaAnalyticsConsumer` listens to the topic and invokes `SaveVisitUseCase` in the background
 - **Added dependency**: `spring-boot-starter-kafka`
+
+This version strikes the best balance when you need fast redirects and durable analytics: redirect latency stays close to `v2` while visit data still reaches Postgres through the Kafka consumer.
