@@ -20,9 +20,9 @@ Adds a Redis cache layer using the Decorator pattern to shield Postgres from rep
 - **Analytics**: `NoopAnalyticsAdapter` (disabled)
 - **Added dependency**: `spring-boot-starter-data-redis`, `jackson-databind`
 
-## v1.2.0-sync-analytics: synchronous tracking
+## v1.2.0-sync-analytics: synchronous analytics
 
-Records visit events on every redirect. The write happens synchronously inside the redirect request, blocking the HTTP response until Postgres commits.
+Records visit events on every redirect. The analytics write happens synchronously inside the redirect request, blocking the HTTP response until Postgres commits.
 
 - **URL repository**: `CachedUrlRepositoryImpl` (Redis + DB)
 - **Analytics**: `SyncAnalyticsAdapter` implements `AnalyticsPort`. It delegates to `SaveVisitUseCase`, which writes visit metadata (`shortCode`, `ipAddress`, `userAgent`, `clickedAt`) to Postgres

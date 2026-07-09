@@ -30,38 +30,28 @@ Files are split into four layers:
 - Docker and Docker Compose
 - [k6](https://k6.io/) for load testing
 
-### Build the application
+### Build and package
 
 ```bash
 ./gradlew build -x test
-```
-
-### Build the Docker image
-
-```bash
 docker build -t url-shortener-app:latest -f docker/Dockerfile .
 ```
 
-## Documentation
+### Run benchmarks
 
-- [docs/versions.md](docs/versions.md): architectural evolution across four tagged milestones
-- [docs/benchmark.md](docs/benchmark.md): load testing methodology and performance comparison
-
-## Running benchmarks
-
-### On Linux or WSL2 (recommended)
-
-Install `jq` (`sudo apt install jq`), then run:
+On Linux or WSL2 (install `jq` first with `sudo apt install jq`):
 
 ```bash
-chmod +x benchmark/run-benchmarks.sh
 ./benchmark/run-benchmarks.sh
 ```
 
-### On Windows (PowerShell)
+On Windows (PowerShell):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File benchmark/run-benchmarks.ps1
 ```
 
-See [docs/benchmark.md](docs/benchmark.md) for methodology, manual test steps, and full results.
+## Documentation
+
+- [docs/versions.md](docs/versions.md): architectural evolution across four tagged milestones
+- [docs/benchmark.md](docs/benchmark.md): load testing methodology, performance results, and manual test steps
