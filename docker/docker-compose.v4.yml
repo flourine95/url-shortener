@@ -1,0 +1,91 @@
+name: url-shortener-v4
+
+services:
+  db-v4:
+    image: postgres:16-alpine
+    container_name: url-shortener-db-v4
+    environment:
+      POSTGRES_DB: url_shortener_v4
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - pg_data_v4:/var/lib/postgresql/data
+    networks:
+      - net-v4
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d url_shortener_v4"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis-v4:
+    image: redis:7-alpine
+    container_name: url-shortener-redis-v4
+    ports:
+      - "6373:6379"
+    volumes:
+      - redis_data_v4:/data
+    networks:
+      - net-v4
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  kafka-v4:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: url-shortener-kafka-v4
+    ports:
+      - "9091:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-v4:9092,PLAINTEXT_HOST://localhost:9091'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-v4:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9091'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+    networks:
+      - net-v4
+
+  app-v4:
+    image: url-shortener-app:latest
+    container_name: url-shortener-app-v4
+    depends_on:
+      db-v4:
+        condition: service_healthy
+      redis-v4:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: v4
+      DB_HOST: db-v4
+      DB_PORT: 5432
+      DB_NAME: url_shortener_v4
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis-v4
+      REDIS_PORT: 6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka-v4:9092
+      PORT: 8084
+    ports:
+      - "8084:8084"
+    networks:
+      - net-v4
+
+networks:
+  net-v4:
+    driver: bridge
+
+volumes:
+  pg_data_v4:
+  redis_data_v4:

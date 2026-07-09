@@ -1,0 +1,67 @@
+name: url-shortener-v3
+
+services:
+  db-v3:
+    image: postgres:16-alpine
+    container_name: url-shortener-db-v3
+    environment:
+      POSTGRES_DB: url_shortener_v3
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data_v3:/var/lib/postgresql/data
+    networks:
+      - net-v3
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d url_shortener_v3"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis-v3:
+    image: redis:7-alpine
+    container_name: url-shortener-redis-v3
+    ports:
+      - "6372:6379"
+    volumes:
+      - redis_data_v3:/data
+    networks:
+      - net-v3
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app-v3:
+    image: url-shortener-app:latest
+    container_name: url-shortener-app-v3
+    depends_on:
+      db-v3:
+        condition: service_healthy
+      redis-v3:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: v3
+      DB_HOST: db-v3
+      DB_PORT: 5432
+      DB_NAME: url_shortener_v3
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis-v3
+      REDIS_PORT: 6379
+      PORT: 8083
+    ports:
+      - "8083:8083"
+    networks:
+      - net-v3
+
+networks:
+  net-v3:
+    driver: bridge
+
+volumes:
+  pg_data_v3:
+  redis_data_v3:

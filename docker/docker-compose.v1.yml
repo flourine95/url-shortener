@@ -1,0 +1,47 @@
+name: url-shortener-v1
+
+services:
+  db-v1:
+    image: postgres:16-alpine
+    container_name: url-shortener-db-v1
+    environment:
+      POSTGRES_DB: url_shortener_v1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5431:5432"
+    volumes:
+      - pg_data_v1:/var/lib/postgresql/data
+    networks:
+      - net-v1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d url_shortener_v1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app-v1:
+    image: url-shortener-app:latest
+    container_name: url-shortener-app-v1
+    depends_on:
+      db-v1:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: v1
+      DB_HOST: db-v1
+      DB_PORT: 5432
+      DB_NAME: url_shortener_v1
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      PORT: 8081
+    ports:
+      - "8081:8081"
+    networks:
+      - net-v1
+
+networks:
+  net-v1:
+    driver: bridge
+
+volumes:
+  pg_data_v1:
