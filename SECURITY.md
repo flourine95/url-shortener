@@ -14,3 +14,5 @@ The project supports security updates for the following versions:
 If you discover a potential security vulnerability, do not open a public issue. Instead, report it privately by emailing the maintainer.
 
 The maintainers review submissions and respond within 48 hours.
+
+This project does not process sensitive production data.
