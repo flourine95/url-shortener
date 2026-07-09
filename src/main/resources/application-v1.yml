@@ -1,0 +1,6 @@
+management:
+  health:
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
