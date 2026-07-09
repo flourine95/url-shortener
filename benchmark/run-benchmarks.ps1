@@ -78,13 +78,13 @@ foreach ($v in $versions) {
     if (Test-Path $jsonSummary) {
         $summary = Get-Content $jsonSummary | ConvertFrom-Json
         
-        $reqs = $summary.metrics.http_reqs.values.count
-        $rps = [Math]::Round($summary.metrics.http_reqs.values.rate, 2)
-        $min = [Math]::Round($summary.metrics.http_req_duration.values.min, 2)
-        $med = [Math]::Round($summary.metrics.http_req_duration.values.med, 2)
-        $p95 = [Math]::Round($summary.metrics.http_req_duration.values."p(95)", 2)
-        $p99 = [Math]::Round($summary.metrics.http_req_duration.values."p(99)", 2)
-        $failRate = [Math]::Round($summary.metrics.http_req_failed.values.rate * 100, 2)
+        $reqs = $summary.metrics.http_reqs.count
+        $rps = [Math]::Round($summary.metrics.http_reqs.rate, 2)
+        $min = [Math]::Round($summary.metrics.http_req_duration.min, 2)
+        $med = [Math]::Round($summary.metrics.http_req_duration.med, 2)
+        $p95 = [Math]::Round($summary.metrics.http_req_duration."p(95)", 2)
+        $p90 = [Math]::Round($summary.metrics.http_req_duration."p(90)", 2)
+        $failRate = [Math]::Round($summary.metrics.http_req_failed.value * 100, 2)
 
         $results += [PSCustomObject]@{
             Version = $v.Name
@@ -93,7 +93,7 @@ foreach ($v in $versions) {
             Min = "$($min)ms"
             Median = "$($med)ms"
             P95 = "$($p95)ms"
-            P99 = "$($p99)ms"
+            P90 = "$($p90)ms"
             ErrorRate = "$($failRate)%"
         }
         Write-Host "Completed $($v.Name): RPS = $rps, P95 = $($p95)ms" -ForegroundColor Green
@@ -108,12 +108,12 @@ Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host "BENCHMARKING RESULTS COMPARISON" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 
-$mdHeader = "| Version | RPS | Total Requests | Min Latency | Median Latency | P95 Latency | P99 Latency | Error Rate |"
+$mdHeader = "| Version | RPS | Total Requests | Min Latency | Median Latency | P95 Latency | P90 Latency | Error Rate |"
 $mdDivider = "|---|---|---|---|---|---|---|---|--"
 $mdRows = @()
 
 foreach ($r in $results) {
-    $mdRows += "| $($r.Version) | $($r.RPS) | $($r.TotalReqs) | $($r.Min) | $($r.Median) | $($r.P95) | $($r.P99) | $($r.ErrorRate) |"
+    $mdRows += "| $($r.Version) | $($r.RPS) | $($r.TotalReqs) | $($r.Min) | $($r.Median) | $($r.P95) | $($r.P90) | $($r.ErrorRate) |"
 }
 
 $mdTable = @($mdHeader, $mdDivider) + $mdRows | Out-String
