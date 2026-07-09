@@ -35,4 +35,10 @@ public class RepositoryConfiguration {
     public AnalyticsPort analyticsPortV1V2() {
         return new NoopAnalyticsAdapter();
     }
+
+    @Bean
+    @Profile("v3")
+    public AnalyticsPort analyticsPortV3(com.example.urlshortener.domain.url.usecase.SaveVisitUseCase saveVisitUseCase) {
+        return new com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter(saveVisitUseCase);
+    }
 }
