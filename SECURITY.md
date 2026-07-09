@@ -1,16 +1,20 @@
-# Security Policy
+---
+meta.contentType: Reference
+---
 
-## Supported Versions
+# Security policy
 
-We support security updates for the following versions:
+## Supported versions
+
+The project supports security updates for the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.x     | :white_check_mark: |
 | 1.x     | :x:                |
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-If you discover a potential security vulnerability, please do not open a public issue. Instead, report it privately by emailing the maintainer.
+If you discover a potential security vulnerability, do not open a public issue. Instead, report it privately by emailing the maintainer.
 
-We will review your submission and respond within 48 hours.
+The maintainers review submissions and respond within 48 hours.
