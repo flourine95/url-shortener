@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Log files
+*.log
+
+# Docker database volumes
+docker/data/
+docker/pg_data/
+docker/redis_data/
+docker/kafka_data/
+docker/zookeeper_data/
