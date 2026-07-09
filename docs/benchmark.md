@@ -15,7 +15,7 @@ To ensure scientific accuracy and reliable side-by-side metrics:
 
 ## Performance results
 
-The following results were measured inside a WSL2 Ubuntu 22.04 LTS instance with Docker Desktop WSL2 integration (on a host machine with AMD Ryzen 7 5800X, 32 GB RAM, PCIe Gen4 SSD):
+The following results were measured inside a WSL2 Ubuntu 22.04 LTS instance with Docker Desktop WSL2 integration (on a host machine with 12th Gen Intel(R) Core(TM) i5-12450H, 24 GB RAM, running Windows 11):
 
 | Version | RPS | Total Requests | Min Latency | Median Latency | P95 Latency | P90 Latency | Error Rate |
 |---|---|---|---|---|---|---|---|
