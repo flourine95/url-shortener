@@ -1,241 +1,241 @@
 {
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "status is 302": {
+                    "id": "9ef425e11baabefe00b04a8500db882d",
+                    "passes": 55507,
+                    "fails": 0,
+                    "name": "status is 302",
+                    "path": "::status is 302"
+                },
+                "has Location header": {
+                    "fails": 0,
+                    "name": "has Location header",
+                    "path": "::has Location header",
+                    "id": "a5bcc5a2a32157f0e3dcaa526ac76eaa",
+                    "passes": 55507
+                }
+            }
+    },
     "metrics": {
-        "data_received": {
-            "count": 5090358,
-            "rate": 119374.24976567242
+        "iterations": {
+            "rate": 1333.4211052972862,
+            "count": 55501
         },
-        "http_req_duration{expected_response:true}": {
-            "avg": 29.686448361796412,
-            "min": 5.3203,
-            "med": 24.7455,
-            "max": 910.4025,
-            "p(90)": 50.28047999999999,
-            "p(95)": 63.63887999999993
-        },
-        "http_req_waiting": {
-            "p(95)": 63.459019999999725,
-            "avg": 29.54634424541446,
-            "min": 5.1335,
-            "med": 24.5912,
-            "max": 908.9486,
-            "p(90)": 50.134519999999995
-        },
-        "http_req_blocked": {
+        "http_req_tls_handshaking": {
             "p(90)": 0,
             "p(95)": 0,
-            "avg": 0.020487762175838066,
+            "avg": 0,
             "min": 0,
             "med": 0,
-            "max": 26.8471
+            "max": 0
         },
-        "http_req_failed": {
-            "passes": 0,
-            "fails": 39525,
-            "value": 0
+        "http_req_sending": {
+            "avg": 0.03062772492671784,
+            "min": 0,
+            "med": 0,
+            "max": 28.6398,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_waiting": {
+            "p(95)": 39.56567,
+            "avg": 17.8193880914273,
+            "min": 3.678,
+            "med": 14.0718,
+            "max": 528.7499,
+            "p(90)": 31.849400000000003
         },
         "iteration_duration": {
-            "p(95)": 74.8318,
-            "avg": 40.58248290505028,
-            "min": 15.8767,
-            "med": 35.5601,
-            "max": 333.2478,
-            "p(90)": 61.3376
+            "p(95)": 51.0882,
+            "avg": 28.820096201870314,
+            "min": 13.7537,
+            "med": 25.012,
+            "max": 143.0963,
+            "p(90)": 43.3708
         },
-        "iterations": {
-            "count": 39421,
-            "rate": 924.4639178644354
+        "http_req_receiving": {
+            "avg": 0.11938072185156583,
+            "min": 0,
+            "med": 0,
+            "max": 29.4162,
+            "p(90)": 0.5274,
+            "p(95)": 0.5951
         },
         "http_req_duration": {
-            "min": 5.3203,
-            "med": 24.7455,
-            "max": 910.4025,
-            "p(90)": 50.28047999999999,
-            "p(95)": 63.63887999999993,
-            "avg": 29.686448361796412,
+            "avg": 17.969396538205608,
+            "min": 3.678,
+            "med": 14.2007,
+            "max": 529.7033,
+            "p(90)": 32.07170000000001,
+            "p(95)": 39.80378999999997,
             "thresholds": {
                 "p(95)<200": false
             }
         },
+        "data_received": {
+            "count": 7151944,
+            "rate": 171826.68913180474
+        },
         "vus": {
-            "max": 50,
             "value": 50,
-            "min": 0
+            "min": 0,
+            "max": 50
         },
-        "data_sent": {
-            "count": 2858088,
-            "rate": 67025.17008907255
-        },
-        "http_req_sending": {
-            "med": 0,
-            "max": 4.3323,
-            "p(90)": 0,
-            "p(95)": 0,
-            "avg": 0.019209922833649598,
-            "min": 0
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 55607,
+            "value": 0
         },
         "vus_max": {
             "value": 50,
             "min": 50,
             "max": 50
         },
-        "http_req_tls_handshaking": {
-            "avg": 0,
+        "checks": {
+            "passes": 111014,
+            "fails": 0,
+            "value": 1
+        },
+        "data_sent": {
+            "count": 4015992,
+            "rate": 96484.9010198926
+        },
+        "http_req_connecting": {
+            "avg": 0.012508547485028878,
             "min": 0,
             "med": 0,
-            "max": 0,
+            "max": 12.157,
             "p(90)": 0,
             "p(95)": 0
         },
         "http_reqs": {
-            "count": 39525,
-            "rate": 926.9028272644482
+            "count": 55607,
+            "rate": 1335.9677735944613
         },
-        "checks": {
-            "passes": 78848,
-            "fails": 0,
-            "value": 1
+        "http_req_duration{expected_response:true}": {
+            "med": 14.2007,
+            "max": 529.7033,
+            "p(90)": 32.07170000000001,
+            "p(95)": 39.80378999999997,
+            "avg": 17.969396538205608,
+            "min": 3.678
         },
-        "http_req_connecting": {
-            "p(90)": 0,
+        "http_req_blocked": {
             "p(95)": 0,
-            "avg": 0.010844981657179,
+            "avg": 0.019656345424137262,
             "min": 0,
             "med": 0,
-            "max": 4.1902
-        },
-        "http_req_receiving": {
-            "p(95)": 0.6176,
-            "avg": 0.12089419354838755,
-            "min": 0,
-            "med": 0,
-            "max": 10.0255,
-            "p(90)": 0.5396
+            "max": 22.7951,
+            "p(90)": 0
         }
     },
     "setup_data": {
         "shortCodes": [
-            "kCRXQm",
-            "ksT5h6",
-            "KBCOaN",
-            "CScILG",
-            "2QL7Is",
-            "Dx5tER",
-            "iE72GY",
-            "P9TZ00",
-            "qiHSXq",
-            "P3fVZE",
-            "1su2Uw",
-            "g9gLcl",
-            "ijWlwb",
-            "GLh0r9",
-            "jhUAYU",
-            "rTYMIM",
-            "VPJGyB",
-            "1WKxpg",
-            "C0YhLA",
-            "F9Pv5R",
-            "uU1KfF",
-            "0xEBT7",
-            "AeAfkI",
-            "qtFLhe",
-            "DYxGBg",
-            "QOmqy0",
-            "u0n7f9",
-            "FW5XgB",
-            "D3eShG",
-            "2OY6EN",
-            "h3BNyt",
-            "kIXx5b",
-            "dYN9KO",
-            "clg5NY",
-            "ramFZ1",
-            "YraFXY",
-            "V1xqfp",
-            "BEJsub",
-            "ODWHjf",
-            "3fbp8E",
-            "6bOCBi",
-            "aHqZTU",
-            "e4bVmj",
-            "bemE4C",
-            "dq6nP5",
-            "tSoIh8",
-            "gPt9z1",
-            "UKwwBY",
-            "MAxQNl",
-            "jyJlJv",
-            "JdlFCb",
-            "6YUpR0",
-            "jgBFYa",
-            "b9sgzW",
-            "0d55tr",
-            "epE3VJ",
-            "YiHmYC",
-            "QxBSIA",
-            "uO8NDo",
-            "B9nGJy",
-            "YrqMi8",
-            "80ZYPe",
-            "x5BDbc",
-            "rfcZeE",
-            "a7Ev2L",
-            "AuJaRh",
-            "VwqWYs",
-            "qqhk6U",
-            "W0wMKZ",
-            "FXJVOo",
-            "uZcYNp",
-            "lOY3hr",
-            "mJOwG1",
-            "vjHrZM",
-            "7SyxEw",
-            "P3C8kY",
-            "5RDnvX",
-            "Yg37r5",
-            "kdKCvH",
-            "iimc8q",
-            "p3tce9",
-            "OAt2xu",
-            "1gp3n4",
-            "DIl698",
-            "gH0sUX",
-            "ZzEKvb",
-            "NRA9tf",
-            "PUUCPD",
-            "ZTbC2L",
-            "xy0mNK",
-            "XNPUI0",
-            "plMSpe",
-            "OY1Wj9",
-            "LjvhZG",
-            "ws67pV",
-            "lajXiI",
-            "21mP6k",
-            "CApKP8",
-            "xkT5jh",
-            "ZmLTRK"
+            "hi1Vcy",
+            "lmor63",
+            "BHbdD9",
+            "GRV5YG",
+            "pLtoYY",
+            "AEqPIA",
+            "eRmG13",
+            "XnI5ms",
+            "ub7ycp",
+            "ATe9Ds",
+            "cun9wJ",
+            "dfVg2w",
+            "069vOx",
+            "TRdoNG",
+            "cgz9AR",
+            "dTbq68",
+            "skwihL",
+            "66ZB0l",
+            "IuVEW7",
+            "yqNAyw",
+            "HoBuDs",
+            "bV7R46",
+            "QWfOxY",
+            "8S3Tdg",
+            "h5EdaD",
+            "bW9HJP",
+            "Cw9wDa",
+            "PrI5Bs",
+            "LgNEMq",
+            "lQibhD",
+            "phKYU5",
+            "bXFdRE",
+            "D6DvmI",
+            "RAtl83",
+            "os2mqF",
+            "zLo4ZZ",
+            "aDeuOr",
+            "9OSwJ0",
+            "hrJngk",
+            "HPvsdh",
+            "7m07S9",
+            "8ZjMIC",
+            "iLyMej",
+            "tTNOHX",
+            "5Mqghq",
+            "ryxA3h",
+            "xHSbPu",
+            "hw7Twc",
+            "EdJfu3",
+            "r1Okzy",
+            "PnjnNo",
+            "g8lCTb",
+            "Ue90fC",
+            "VPz01y",
+            "IKxY49",
+            "23D5Do",
+            "mRLv0b",
+            "eSo0e9",
+            "O0EwHT",
+            "bpNTym",
+            "gqXsgV",
+            "ewRYUG",
+            "rlYTrJ",
+            "1JMnO6",
+            "JPDwmn",
+            "CQ08la",
+            "GFe2jd",
+            "DjEWdO",
+            "49AYGY",
+            "XTgCpP",
+            "s4CxhK",
+            "kkVOBy",
+            "qBNVxr",
+            "W64Hxv",
+            "ORQfI6",
+            "oxrrjB",
+            "qV83yq",
+            "ThyVeg",
+            "VKmjhZ",
+            "WHzlgz",
+            "oqSQXx",
+            "rALoTC",
+            "mNUXO8",
+            "SUEj8F",
+            "mx9U9q",
+            "sqxJRt",
+            "SwVPTY",
+            "XpOJde",
+            "mMvC0y",
+            "5v7AWq",
+            "qgvaDy",
+            "JjETwr",
+            "Nnf9Rc",
+            "aIAXxt",
+            "6wSW9K",
+            "6U7dgB",
+            "vn5GiV",
+            "ZKukjS",
+            "kWAhG8",
+            "xhuHS0"
         ]
-    },
-    "root_group": {
-        "id": "d41d8cd98f00b204e9800998ecf8427e",
-        "groups": {},
-        "checks": {
-                "status is 302": {
-                    "path": "::status is 302",
-                    "id": "9ef425e11baabefe00b04a8500db882d",
-                    "passes": 39424,
-                    "fails": 0,
-                    "name": "status is 302"
-                },
-                "has Location header": {
-                    "name": "has Location header",
-                    "path": "::has Location header",
-                    "id": "a5bcc5a2a32157f0e3dcaa526ac76eaa",
-                    "passes": 39424,
-                    "fails": 0
-                }
-            },
-        "name": "",
-        "path": ""
     }
 }

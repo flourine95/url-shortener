@@ -12,16 +12,16 @@ To ensure scientific accuracy and reliable side-by-side metrics:
 
 ## Performance results
 
-The following results were measured on a local development machine (AMD Ryzen 7 5800X, 32 GB RAM, PCIe Gen4 SSD, running Docker Desktop):
+The following results were measured on a local development machine (AMD Ryzen 7 5800X, 12 Core, 32 GB RAM, PCIe Gen4 SSD, running Docker Desktop):
 
 | Version | RPS | Total Requests | Min Latency | Median Latency | P95 Latency | P90 Latency | Error Rate |
 |---|---|---|---|---|---|---|---|
-| **`v1.0.0-postgres`** | 1,482 | 44,460 | 12.1ms | 22.4ms | 34.8ms | 58.4ms | 0.0% |
-| **`v1.1.0-redis`** | 12,391 | 371,730 | 0.8ms | 2.1ms | 3.8ms | 7.2ms | 0.0% |
-| **`v1.2.0-sync-analytics`** | 943 | 28,290 | 15.4ms | 38.6ms | 52.1ms | 82.5ms | 0.0% |
-| **`v2.0.0-kafka-async`** | 8,154 | 244,620 | 1.2ms | 3.5ms | 6.2ms | 10.1ms | 0.0% |
+| **`v1.0.0-postgres`** | 2,588.45 | 106,665 | 0.51ms | 3.47ms | 10.02ms | 7.59ms | 0.0% |
+| **`v1.1.0-redis`** | 2,477.76 | 103,986 | 0.00ms | 3.36ms | 11.58ms | 8.39ms | 0.0% |
+| **`v1.2.0-sync-analytics`** | 1,335.97 | 55,607 | 3.68ms | 14.20ms | 39.80ms | 32.07ms | 0.0% |
+| **`v2.0.0-kafka-async`** | 1,901.53 | 79,801 | 0.57ms | 6.86ms | 21.22ms | 16.37ms | 0.0% |
 
 ### Key takeaways:
-- **Caching Speedup**: Moving from `v1.0.0-postgres` to `v1.1.0-redis` increased throughput by **~8.3x** and reduced p95 latency by **~9x** by shielding the database.
-- **Analytics Bottleneck**: Adding synchronous visit logging in `v1.2.0-sync-analytics` reduced throughput by **~13x** because every redirect had to wait for a database write.
-- **Asynchronous Restoral**: Switching to event-driven logging in `v2.0.0-kafka-async` restored performance to **~8,100 RPS** (a **~8.6x** improvement over synchronous write) while maintaining analytics recording.
+- **Local Postgres Speed vs. Redis Caching**: In local single-host testing with a small dataset (100 pre-generated URLs), PostgreSQL reads perform similarly to Redis reads (~2,500 RPS). This occurs because the database indices reside entirely in Postgres's RAM, and the network overhead of routing requests to a separate Dockerized Redis container offsets caching gains.
+- **Analytics Write Bottleneck**: Adding synchronous database logging in `v1.2.0-sync-analytics` drops throughput by **~48%** (from 2,588 to 1,335 RPS) and increases P95 latency to **39.8ms** because every redirection request must block to write analytics records synchronously.
+- **Asynchronous Restoral**: Switching to event-driven logging in `v2.0.0-kafka-async` restores performance to **1,901.53 RPS** (a **~42%** improvement over synchronous write) and reduces P95 latency to **21.22ms** by offloading analytics writes to the Kafka broker asynchronously.
