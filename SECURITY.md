@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-The project supports security updates for the following versions:
+Security updates cover these versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -11,8 +11,6 @@ The project supports security updates for the following versions:
 
 ## Reporting a vulnerability
 
-If you discover a potential security vulnerability, do not open a public issue. Instead, report it privately by emailing the maintainer.
+If you discover a potential security vulnerability, do not open a public issue. Report it privately by emailing the maintainer.
 
-The maintainers review submissions and respond within 48 hours.
-
-This project does not process sensitive production data.
+Expect a response within 48 hours. This project does not process sensitive production data.

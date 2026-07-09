@@ -1,34 +1,38 @@
 # URL shortener architectural evolutions
 
-This document details the software development steps and architectural differences across the four tagged milestones.
+Four tagged milestones track how the URL shortener evolved from a Postgres-only redirect service to a cached, event-driven system with asynchronous analytics.
 
-## v1.0.0-postgres (PostgreSQL redirection)
+## v1.0.0-postgres: PostgreSQL redirection
 
-- **Summary**: Queries and records redirection metadata directly in a PostgreSQL database.
-- **URL Repository**: `PostgresUrlRepositoryImpl` implementing standard JPA queries against the `urls` table.
-- **Analytics**: `NoopAnalyticsAdapter` (no analytics recorded).
-- **Core Components**: `UrlData` domain record and standard `CreateUrlUseCase` / `RedirectUrlUseCase`.
+The baseline version. Redirect lookups query Postgres directly. No analytics are recorded.
 
-## v1.1.0-redis (Read-through caching)
+- **URL repository**: `PostgresUrlRepositoryImpl` runs standard JPA queries against the `urls` table
+- **Analytics**: `NoopAnalyticsAdapter` (disabled)
+- **Core components**: `UrlData` domain record, `CreateUrlUseCase`, `RedirectUrlUseCase`
 
-- **Summary**: Adds read-through caching with Redis.
-- **URL Repository**: `CachedUrlRepositoryImpl` wraps `PostgresUrlRepositoryImpl` using the Decorator design pattern.
-  - On write: Writes to Postgres, then writes to Redis (write-through).
-  - On read: Checks Redis first. On cache miss, retrieves from Postgres and writes back to Redis (cache-aside / read-through).
-- **Analytics**: `NoopAnalyticsAdapter` (no analytics recorded).
-- **Technology**: Added `spring-boot-starter-data-redis` and `jackson-databind`.
+## v1.1.0-redis: read-through caching
 
-## v1.2.0-sync-analytics (Synchronous tracking)
+Adds a Redis cache layer using the Decorator pattern to shield Postgres from repeated read queries.
 
-- **Summary**: Records visit events synchronously.
-- **URL Repository**: `CachedUrlRepositoryImpl` (Redis + DB).
-- **Analytics**: `SyncAnalyticsAdapter` implements `AnalyticsPort` and delegates calls to `SaveVisitUseCase` synchronously to write visit metadata (`shortCode`, `ipAddress`, `userAgent`, `clickedAt`) directly to PostgreSQL.
-- **Core Components**: Introduced `SaveVisitUseCase` (Input Port) and `VisitDatabasePort` (Output Port) to decouple DB writes.
+- **URL repository**: `CachedUrlRepositoryImpl` wraps `PostgresUrlRepositoryImpl`
+  - On write: writes to Postgres, then writes to Redis (write-through)
+  - On read: checks Redis first. On cache miss, reads from Postgres and stores the result in Redis (read-through)
+- **Analytics**: `NoopAnalyticsAdapter` (disabled)
+- **Added dependency**: `spring-boot-starter-data-redis`, `jackson-databind`
 
-## v2.0.0-kafka-async (Asynchronous event-driven analytics)
+## v1.2.0-sync-analytics: synchronous tracking
 
-- **Summary**: Publishes visit events to Kafka and persists them asynchronously.
-- **URL Repository**: `CachedUrlRepositoryImpl` (Redis + DB).
-- **Analytics**: `KafkaAnalyticsAdapter` implements `AnalyticsPort` and publishes visit JSON payloads to the Kafka topic `url-analytics` asynchronously, returning immediately.
-- **Consumer**: `KafkaAnalyticsConsumer` listens to the topic and invokes `SaveVisitUseCase` in the background.
-- **Technology**: Added `spring-kafka` dependency.
+Records visit events on every redirect. The write happens synchronously inside the redirect request, blocking the HTTP response until Postgres commits.
+
+- **URL repository**: `CachedUrlRepositoryImpl` (Redis + DB)
+- **Analytics**: `SyncAnalyticsAdapter` implements `AnalyticsPort`. It delegates to `SaveVisitUseCase`, which writes visit metadata (`shortCode`, `ipAddress`, `userAgent`, `clickedAt`) to Postgres
+- **Added components**: `SaveVisitUseCase` (input port), `VisitDatabasePort` (output port)
+
+## v2.0.0-kafka-async: asynchronous event-driven analytics
+
+Replaces synchronous database writes with Kafka event publishing. The redirect handler returns HTTP 302 immediately. A background consumer persists visit records.
+
+- **URL repository**: `CachedUrlRepositoryImpl` (Redis + DB)
+- **Analytics**: `KafkaAnalyticsAdapter` implements `AnalyticsPort`. It publishes visit JSON payloads to the `url-analytics` Kafka topic and returns without waiting for persistence
+- **Consumer**: `KafkaAnalyticsConsumer` listens to the topic and invokes `SaveVisitUseCase` in the background
+- **Added dependency**: `spring-boot-starter-kafka`
