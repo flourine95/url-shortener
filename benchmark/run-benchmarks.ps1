@@ -116,9 +116,16 @@ foreach ($r in $results) {
     $mdRows += "| $($r.Version) | $($r.RPS) | $($r.TotalReqs) | $($r.Min) | $($r.Median) | $($r.P95) | $($r.P99) | $($r.ErrorRate) |"
 }
 
-$mdContent = @($mdHeader, $mdDivider) + $mdRows | Out-String
+$mdTable = @($mdHeader, $mdDivider) + $mdRows | Out-String
 
-Write-Output $mdContent
-$mdContent | Out-File -FilePath "$BenchmarkDir/results.md" -Encoding utf8
+Write-Output $mdTable
 
-Write-Host "Results saved to benchmark/results.md" -ForegroundColor Green
+if (Test-Path "$RootDir/docs/benchmark.md") {
+    $mdTemplate = Get-Content "$RootDir/docs/benchmark.md" -Raw
+    $mdContent = $mdTemplate.Replace("*(Run the benchmark script to populate this table)*", $mdTable)
+    $mdContent | Out-File -FilePath "$RootDir/docs/benchmark.md" -Encoding utf8 -Force
+    Write-Host "Results saved directly to docs/benchmark.md" -ForegroundColor Green
+} else {
+    $mdTable | Out-File -FilePath "$BenchmarkDir/results.md" -Encoding utf8 -Force
+    Write-Host "Results saved to benchmark/results.md" -ForegroundColor Green
+}
