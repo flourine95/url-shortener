@@ -15,8 +15,8 @@ The baseline version. Redirect lookups query Postgres directly. No analytics are
 Adds a Redis cache layer using the Decorator pattern to shield Postgres from repeated read queries.
 
 - **URL repository**: `CachedUrlRepositoryImpl` wraps `PostgresUrlRepositoryImpl`
-  - On write: writes to Postgres, then writes to Redis (write-through)
-  - On read: checks Redis first. On cache miss, reads from Postgres and stores the result in Redis (read-through)
+  - On write: persists to Postgres and refreshes Redis
+  - On read: checks Redis first, then falls back to Postgres on cache miss
 - **Analytics**: `NoopAnalyticsAdapter` (disabled)
 - **Added dependency**: `spring-boot-starter-data-redis`, `jackson-databind`
 

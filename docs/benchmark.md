@@ -9,7 +9,7 @@ Four constraints keep the results comparable across versions:
 1. **Isolated environments**: Each version runs in its own Docker Compose stack. Databases, Redis caches, and Kafka brokers are separate to prevent cross-contamination of cache states, TCP connections, or disk queues
 2. **Resource-constrained VM**: The benchmark runs inside a WSL2 Linux VM allocated 4 vCPUs, 8 GB memory, and 2 GB swap. This keeps the test closer to a constrained deployment and avoids relying on the full host capacity
 3. **Warm-up phase**: Each run starts with a 10 s warm-up (10 concurrent virtual users) to prime JIT compilation, database connections, and cache pools. A 30 s load phase (50 concurrent virtual users) follows
-4. **No redirect follow**: The k6 script sets `redirects: 0`. This measures the URL shortener's core processing latency (Postgres query, Redis lookup, Kafka publish) without adding network round-trips to external target sites
+4. **No redirect follow**: The k6 script sets `redirects: 0` to measure only the shortener's core processing latency, without adding network round-trips to external target sites
 
 ## Performance results
 

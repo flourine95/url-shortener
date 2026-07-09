@@ -15,7 +15,7 @@ Spring Profiles toggle the active version from a single compiled binary or Docke
 
 ## Package layout
 
-Files are split into four layers:
+The codebase is organized into four layers:
 
 - **`application/`**: REST controllers and HTTP request/response DTOs
 - **`domain/`**: Domain models, command/query DTOs, and use case interfaces (input ports)
@@ -30,10 +30,15 @@ Files are split into four layers:
 - Docker and Docker Compose
 - [k6](https://k6.io/) for load testing
 
-### Build and package
+### Build the application
 
 ```bash
 ./gradlew build -x test
+```
+
+### Build the Docker image
+
+```bash
 docker build -t url-shortener-app:latest -f docker/Dockerfile .
 ```
 
