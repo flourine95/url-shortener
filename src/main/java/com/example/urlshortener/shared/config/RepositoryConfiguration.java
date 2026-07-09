@@ -49,4 +49,10 @@ public class RepositoryConfiguration {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
         return new com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);
     }
+
+    @Bean
+    public com.fasterxml.jackson.databind.ObjectMapper objectMapper() {
+        return new com.fasterxml.jackson.databind.ObjectMapper()
+            .registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    }
 }
