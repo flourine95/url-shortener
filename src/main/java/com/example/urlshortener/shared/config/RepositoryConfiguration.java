@@ -41,4 +41,12 @@ public class RepositoryConfiguration {
     public AnalyticsPort analyticsPortV3(com.example.urlshortener.domain.url.usecase.SaveVisitUseCase saveVisitUseCase) {
         return new com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter(saveVisitUseCase);
     }
+
+    @Bean
+    @Profile("v4")
+    public AnalyticsPort analyticsPortV4(
+            org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate,
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        return new com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);
+    }
 }

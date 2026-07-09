@@ -35,6 +35,9 @@ dependencies {
 	// Redis Caching
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	
+	// Kafka Messaging
+	implementation 'org.springframework.kafka:spring-kafka'
+	
 	// MapStruct for clean Entity <-> DTO Mapping
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
