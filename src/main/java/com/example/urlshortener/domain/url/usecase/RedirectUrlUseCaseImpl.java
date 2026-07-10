@@ -2,7 +2,8 @@ package com.example.urlshortener.domain.url.usecase;
 
 import com.example.urlshortener.domain.url.dto.UrlData;
 import com.example.urlshortener.domain.url.dto.VisitData;
-import com.example.urlshortener.domain.url.exception.NotFoundException;
+import com.example.urlshortener.domain.url.exception.UrlExpiredException;
+import com.example.urlshortener.domain.url.exception.UrlNotFoundException;
 import com.example.urlshortener.domain.url.repository.AnalyticsPort;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,11 @@ public class RedirectUrlUseCaseImpl implements RedirectUrlUseCase {
     @Transactional
     public UrlData execute(String shortCode, String ipAddress, String userAgent) {
         UrlData urlData = urlRepository.findByShortCode(shortCode)
-            .orElseThrow(() -> new NotFoundException("URL_NOT_FOUND", "URL with code " + shortCode + " not found"));
+            .orElseThrow(() -> new UrlNotFoundException(shortCode));
+
+        if (urlData.expiresAt() != null && !urlData.expiresAt().isAfter(LocalDateTime.now())) {
+            throw new UrlExpiredException(shortCode);
+        }
 
         // Record visit via output port
         VisitData visitData = new VisitData(

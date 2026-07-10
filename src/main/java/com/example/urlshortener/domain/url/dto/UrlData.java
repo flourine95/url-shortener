@@ -7,5 +7,10 @@ public record UrlData(
     String originalUrl,
     String shortCode,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
-) {}
+    LocalDateTime updatedAt,
+    LocalDateTime expiresAt
+) {
+    public UrlData(Long id, String originalUrl, String shortCode, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this(id, originalUrl, shortCode, createdAt, updatedAt, null);
+    }
+}

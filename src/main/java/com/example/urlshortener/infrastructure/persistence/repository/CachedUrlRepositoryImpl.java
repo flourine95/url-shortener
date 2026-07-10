@@ -6,6 +6,8 @@ import com.example.urlshortener.infrastructure.cache.RedisUrlCacheService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class CachedUrlRepositoryImpl implements UrlRepository {
@@ -33,10 +35,26 @@ public class CachedUrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
+    public Optional<UrlData> findByOriginalUrl(String originalUrl) {
+        return delegate.findByOriginalUrl(originalUrl);
+    }
+
+    @Override
     public boolean existsByShortCode(String shortCode) {
         if (cacheService.get(shortCode).isPresent()) {
             return true;
         }
         return delegate.existsByShortCode(shortCode);
+    }
+
+    @Override
+    public Page<UrlData> findAll(Pageable pageable) {
+        return delegate.findAll(pageable);
+    }
+
+    @Override
+    public void deleteByShortCode(String shortCode) {
+        delegate.deleteByShortCode(shortCode);
+        cacheService.evict(shortCode);
     }
 }

@@ -2,14 +2,20 @@ package com.example.urlshortener.shared.config;
 
 import com.example.urlshortener.domain.url.repository.AnalyticsPort;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
+import com.example.urlshortener.domain.url.usecase.SaveVisitUseCase;
 import com.example.urlshortener.infrastructure.cache.RedisUrlCacheService;
+import com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter;
 import com.example.urlshortener.infrastructure.persistence.repository.CachedUrlRepositoryImpl;
 import com.example.urlshortener.infrastructure.persistence.repository.NoopAnalyticsAdapter;
+import com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @Configuration
 public class RepositoryConfiguration {
@@ -38,21 +44,21 @@ public class RepositoryConfiguration {
 
     @Bean
     @Profile("v3")
-    public AnalyticsPort analyticsPortV3(com.example.urlshortener.domain.url.usecase.SaveVisitUseCase saveVisitUseCase) {
-        return new com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter(saveVisitUseCase);
+    public AnalyticsPort analyticsPortV3(SaveVisitUseCase saveVisitUseCase) {
+        return new SyncAnalyticsAdapter(saveVisitUseCase);
     }
 
     @Bean
     @Profile("v4")
     public AnalyticsPort analyticsPortV4(
-            org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate,
-            com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
-        return new com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);
+            KafkaTemplate<String, String> kafkaTemplate,
+            ObjectMapper objectMapper) {
+        return new KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);
     }
 
     @Bean
-    public com.fasterxml.jackson.databind.ObjectMapper objectMapper() {
-        return new com.fasterxml.jackson.databind.ObjectMapper()
-            .registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule());
     }
 }

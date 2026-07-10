@@ -44,4 +44,8 @@ public class RedisUrlCacheService {
             return Optional.empty();
         }
     }
+
+    public void evict(String shortCode) {
+        redisTemplate.delete(CACHE_PREFIX + shortCode);
+    }
 }

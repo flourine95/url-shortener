@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository("postgresUrlRepository")
 @RequiredArgsConstructor
@@ -29,7 +31,23 @@ public class PostgresUrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
+    public Optional<UrlData> findByOriginalUrl(String originalUrl) {
+        return jpaRepository.findByOriginalUrl(originalUrl)
+            .map(urlMapper::toDomain);
+    }
+
+    @Override
     public boolean existsByShortCode(String shortCode) {
         return jpaRepository.existsByShortCode(shortCode);
+    }
+
+    @Override
+    public Page<UrlData> findAll(Pageable pageable) {
+        return jpaRepository.findAll(pageable).map(urlMapper::toDomain);
+    }
+
+    @Override
+    public void deleteByShortCode(String shortCode) {
+        jpaRepository.findByShortCode(shortCode).ifPresent(jpaRepository::delete);
     }
 }
