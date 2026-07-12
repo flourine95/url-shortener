@@ -1,6 +1,7 @@
 package com.example.urlshortener.infrastructure.persistence.repository;
 
 import com.example.urlshortener.domain.url.dto.UrlData;
+import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import com.example.urlshortener.infrastructure.cache.RedisUrlCacheService;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class CachedUrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
-    public Page<UrlData> findAll(Pageable pageable) {
-        return delegate.findAll(pageable);
+    public Page<UrlListItem> findList(String q, String status, Pageable pageable) {
+        return delegate.findList(q, status, pageable);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 public record PageMeta(
     int page,
     int size,
+    long totalItems,
     long totalElements,
     int totalPages,
     boolean first,
@@ -16,6 +17,7 @@ public record PageMeta(
         return new PageMeta(
             page.getNumber(),
             page.getSize(),
+            page.getTotalElements(),
             page.getTotalElements(),
             page.getTotalPages(),
             page.isFirst(),

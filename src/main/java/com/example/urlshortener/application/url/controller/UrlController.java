@@ -3,6 +3,7 @@ package com.example.urlshortener.application.url.controller;
 import com.example.urlshortener.application.url.request.CreateUrlRequest;
 import com.example.urlshortener.domain.url.dto.CreateUrlCommand;
 import com.example.urlshortener.domain.url.dto.UrlData;
+import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.dto.UrlStats;
 import com.example.urlshortener.domain.url.usecase.CreateUrlUseCase;
 import com.example.urlshortener.domain.url.usecase.RedirectUrlUseCase;
@@ -39,10 +40,13 @@ public class UrlController {
     }
 
     @GetMapping("/api/urls")
-    public ApiResult<List<UrlData>> list(
+    public ApiResult<List<UrlListItem>> list(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Page<UrlData> result = urlManagementUseCase.list(page, size);
+        Page<UrlListItem> result = urlManagementUseCase.list(q, status, sort, page, size);
         return ApiResult.page(result.getContent(), PageMeta.from(result), "URLs fetched successfully");
     }
 

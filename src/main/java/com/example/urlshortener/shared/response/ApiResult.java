@@ -14,11 +14,17 @@ public class ApiResult<T> {
     private T data;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private PageMeta meta;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String code;
     private String message;
     private boolean success;
 
     public ApiResult(T data, String message, boolean success) {
-        this(data, null, message, success);
+        this(data, null, null, message, success);
+    }
+
+    public ApiResult(T data, PageMeta meta, String message, boolean success) {
+        this(data, meta, null, message, success);
     }
 
     public static <T> ApiResult<T> ok(T data) {
@@ -34,6 +40,10 @@ public class ApiResult<T> {
     }
 
     public static <T> ApiResult<T> error(String message) {
-        return new ApiResult<>(null, null, message, false);
+        return new ApiResult<>(null, null, null, message, false);
+    }
+
+    public static <T> ApiResult<T> error(String code, String message) {
+        return new ApiResult<>(null, null, code, message, false);
     }
 }

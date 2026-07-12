@@ -2,12 +2,14 @@ package com.example.urlshortener.domain.url.usecase;
 
 import com.example.urlshortener.domain.url.dto.CreateUrlCommand;
 import com.example.urlshortener.domain.url.dto.UrlData;
+import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.exception.DomainException;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -84,8 +86,8 @@ class CreateUrlUseCaseImplTest {
         }
 
         @Override
-        public Page<UrlData> findAll(Pageable pageable) {
-            return new PageImpl<>(byShortCode.values().stream().toList(), pageable, byShortCode.size());
+        public Page<UrlListItem> findList(String q, String status, Pageable pageable) {
+            return new PageImpl<>(List.of(), pageable, 0);
         }
 
         @Override
