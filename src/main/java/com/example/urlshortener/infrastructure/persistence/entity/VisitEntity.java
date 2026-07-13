@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "visits")
@@ -27,10 +27,10 @@ public class VisitEntity {
     private String userAgent;
 
     @Column(name = "clicked_at", nullable = false)
-    private LocalDateTime clickedAt;
+    private Instant clickedAt;
 
     @PrePersist
     protected void onCreate() {
-        clickedAt = LocalDateTime.now();
+        clickedAt = Instant.now();
     }
 }

@@ -1,11 +1,11 @@
 package com.example.urlshortener.domain.url.dto;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record CreateUrlCommand(
     String originalUrl,
     String customCode,
-    LocalDateTime expiresAt
+    Instant expiresAt
 ) {
     public CreateUrlCommand(String originalUrl, String customCode) {
         this(originalUrl, customCode, null);

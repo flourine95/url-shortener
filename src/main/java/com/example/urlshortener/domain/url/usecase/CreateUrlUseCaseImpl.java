@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Random;
 
@@ -71,14 +71,14 @@ public class CreateUrlUseCaseImpl implements CreateUrlUseCase {
         }
     }
 
-    private void validateExpiration(LocalDateTime expiresAt) {
-        if (expiresAt != null && !expiresAt.isAfter(LocalDateTime.now())) {
+    private void validateExpiration(Instant expiresAt) {
+        if (expiresAt != null && !expiresAt.isAfter(Instant.now())) {
             throw new InvalidExpirationException();
         }
     }
 
     private boolean isExpired(UrlData urlData) {
-        return urlData.expiresAt() != null && !urlData.expiresAt().isAfter(LocalDateTime.now());
+        return urlData.expiresAt() != null && !urlData.expiresAt().isAfter(Instant.now());
     }
 
     private String generateUniqueShortCode() {

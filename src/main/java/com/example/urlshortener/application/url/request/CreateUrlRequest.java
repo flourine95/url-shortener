@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record CreateUrlRequest(
     @NotBlank(message = "Original URL is required")
@@ -14,5 +14,5 @@ public record CreateUrlRequest(
     @Pattern(regexp = "^[a-zA-Z0-9_-]{3,50}$", message = "Custom code must be alphanumeric and between 3 and 50 characters")
     String customCode,
 
-    LocalDateTime expiresAt
+    Instant expiresAt
 ) {}

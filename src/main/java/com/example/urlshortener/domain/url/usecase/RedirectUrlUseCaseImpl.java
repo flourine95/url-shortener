@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class RedirectUrlUseCaseImpl implements RedirectUrlUseCase {
         UrlData urlData = urlRepository.findByShortCode(shortCode)
             .orElseThrow(() -> new UrlNotFoundException(shortCode));
 
-        if (urlData.expiresAt() != null && !urlData.expiresAt().isAfter(LocalDateTime.now())) {
+        if (urlData.expiresAt() != null && !urlData.expiresAt().isAfter(Instant.now())) {
             throw new UrlExpiredException(shortCode);
         }
 
@@ -34,7 +34,7 @@ public class RedirectUrlUseCaseImpl implements RedirectUrlUseCase {
             shortCode,
             ipAddress,
             userAgent,
-            LocalDateTime.now()
+            Instant.now()
         );
         analyticsPort.recordVisit(visitData);
 

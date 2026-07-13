@@ -7,7 +7,7 @@ import com.example.urlshortener.domain.url.exception.DomainException;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ class CreateUrlUseCaseImplTest {
     @Test
     void returnsExistingShortCodeForSameOriginalUrl() {
         FakeUrlRepository repository = new FakeUrlRepository();
-        UrlData existing = new UrlData(1L, "https://example.com/a", "abc123", LocalDateTime.now(), LocalDateTime.now());
+        UrlData existing = new UrlData(1L, "https://example.com/a", "abc123", Instant.now(), Instant.now());
         repository.save(existing);
 
         UrlData result = new CreateUrlUseCaseImpl(repository)
@@ -52,7 +52,7 @@ class CreateUrlUseCaseImplTest {
             .execute(new CreateUrlCommand(
                 "https://example.com",
                 null,
-                LocalDateTime.now().minusMinutes(1))))
+                Instant.now().minusSeconds(60))))
             .isInstanceOf(DomainException.class)
             .hasMessage("Expiration must be in the future");
     }

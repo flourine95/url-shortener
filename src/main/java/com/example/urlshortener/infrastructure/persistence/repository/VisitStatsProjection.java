@@ -1,9 +1,9 @@
 package com.example.urlshortener.infrastructure.persistence.repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public interface VisitStatsProjection {
     String getShortCode();
     long getTotalClicks();
-    LocalDateTime getLastClickedAt();
+    Instant getLastClickedAt();
 }

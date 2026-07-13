@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,12 +64,12 @@ public class PostgresUrlRepositoryImpl implements UrlRepository {
             if ("active".equals(status)) {
                 predicates.add(criteriaBuilder.or(
                     criteriaBuilder.isNull(root.get("expiresAt")),
-                    criteriaBuilder.greaterThan(root.get("expiresAt"), LocalDateTime.now())
+                    criteriaBuilder.greaterThan(root.get("expiresAt"), Instant.now())
                 ));
             } else if ("expired".equals(status)) {
                 predicates.add(criteriaBuilder.and(
                     criteriaBuilder.isNotNull(root.get("expiresAt")),
-                    criteriaBuilder.lessThanOrEqualTo(root.get("expiresAt"), LocalDateTime.now())
+                    criteriaBuilder.lessThanOrEqualTo(root.get("expiresAt"), Instant.now())
                 ));
             }
             return criteriaBuilder.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
