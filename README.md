@@ -5,9 +5,9 @@
 [![Docker](https://img.shields.io/badge/Docker-Supported-blue?logo=docker)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This project implements a high-throughput URL shortener in Java 21 and Spring Boot 4, exploring the performance impacts of database caching and messaging pipelines across four architectural evolutions.
+This project implements a high-throughput URL shortener in Java 21 and Spring Boot 4. It compares the performance of database caching and messaging pipelines across four architectural iterations.
 
-🚀 **[Try the Live Web Demo here!](https://url-shortener-web-lilac.vercel.app)**
+**[Try the live web demo](https://url-shortener-web-lilac.vercel.app).**
 
 ## Key features
 
