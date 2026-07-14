@@ -27,35 +27,35 @@ The following table summarizes the throughput and P95 latency metrics recorded a
 
 Read [docs/benchmark.md](./docs/benchmark.md) for full methodologies, load testing profiles, and memory stability charts.
 
-## Prerequisites
-
-- **Java**: JDK 21 or higher
-- **Docker**: Docker Desktop (or engine) with Docker Compose installed
-- **k6**: Required only if you want to run the load test suites locally
-
 ## Quick Start (Run Latest Version)
 
-The easiest way to run and test the latest high-throughput version (`v2.0.0-kafka-async`) of the URL shortener is using Docker Compose:
+The easiest way to run the entire stack (including the Spring Boot application, PostgreSQL, Redis, and Kafka) is using Docker Compose. The application container will automatically compile the Java project on its first run:
 
-1. **Boot external services** (PostgreSQL, Redis, Kafka):
+1. **Start all services**:
    ```bash
    docker compose -f docker/docker-compose.v4.yml up -d
    ```
-2. **Build and run the application**:
-   ```bash
-   ./gradlew bootRun --args='--spring.profiles.active=v4'
-   ```
-3. **Test the API**:
-   * Create a shortened URL:
+2. **Verify the API**:
+   * **Linux / macOS (Bash/Zsh)**:
      ```bash
-     curl -X POST http://localhost:8084/api/v1/urls \
+     curl -X POST http://localhost:8084/api/urls \
        -H "Content-Type: application/json" \
        -d '{"originalUrl": "https://example.com"}'
      ```
-   * Redirect using the generated short code (e.g., `abc123`):
+   * **Windows (PowerShell)**:
+     ```powershell
+     Invoke-RestMethod -Uri http://localhost:8084/api/urls -Method Post -ContentType "application/json" -Body '{"originalUrl": "https://example.com"}'
+     ```
+   * **Redirect lookup** (replace `abc123` with your generated short code):
      ```bash
      curl -I http://localhost:8084/abc123
      ```
+
+## Prerequisites
+
+- **Docker**: Docker Desktop (or engine) with Docker Compose installed
+- **Java** (Optional, only for local IDE runs): JDK 21 or higher
+- **k6** (Optional, only for running benchmarks): installed on your system
 
 ## Documentation index
 
