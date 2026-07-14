@@ -59,6 +59,9 @@ services:
       - net-v4
 
   app-v4:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
     image: url-shortener-app:latest
     pull_policy: missing
     container_name: url-shortener-app-v4
