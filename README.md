@@ -7,8 +7,6 @@
 
 This project implements a high-throughput URL shortener in Java 21 and Spring Boot 4. It compares the performance of database caching and messaging pipelines across four architectural iterations.
 
-**[Try the live web demo](https://url-shortener-web-lilac.vercel.app).**
-
 ## Key features
 
 - **Hexagonal Architecture**: Decouples business logic from external database adapters, cache libraries, and transport protocols.
