@@ -56,3 +56,12 @@ To decouple redirect execution from analytics persistence, the system publishes 
 
 - **Pros**: The redirect path returns HTTP 302 location headers immediately, recovering the high throughput of the cached read path.
 - **Cons**: Adds operational complexity with the introduction of a Kafka message broker.
+
+## Future Roadmaps (v3.0.0 / v5 ideas)
+
+To scale the system further, the following design improvements are proposed:
+
+- **Horizontal Scaling & Database Replication**: Introduce PostgreSQL read replicas to scale read query capacity, and run multiple stateless Spring Boot instances behind a Load Balancer (Nginx/HAProxy) to distribute HTTP traffic.
+- **API Rate Limiting**: Implement API rate limiting (using Redis Token Bucket algorithm or Spring Cloud Gateway) to protect the write path and prevent DDoS/abuse on short code generation.
+- **Custom Short Code Aliases**: Further extend custom short code validation and custom expiration policies (fully supported at the domain layer, can be exposed with dynamic validation).
+- **High-Availability Kafka & Partitioning**: Partition the `url-analytics` topic to distribute message processing across multiple consumer instances, ensuring parallelized click logging.

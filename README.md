@@ -1,6 +1,13 @@
 # High-throughput URL shortener platform
 
-This project implements a high-throughput URL shortener in Java 21 and Spring Boot, exploring the performance impacts of database caching and messaging pipelines across four architectural evolutions.
+[![Java Version](https://img.shields.io/badge/Java-21-orange?logo=openjdk)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.x-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Docker](https://img.shields.io/badge/Docker-Supported-blue?logo=docker)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This project implements a high-throughput URL shortener in Java 21 and Spring Boot 4, exploring the performance impacts of database caching and messaging pipelines across four architectural evolutions.
+
+🚀 **[Try the Live Web Demo here!](https://url-shortener-web-lilac.vercel.app)**
 
 ## Key features
 
@@ -15,19 +22,49 @@ The following table summarizes the throughput and P95 latency metrics recorded a
 
 | Milestone | Spring Profile | Port | Database Write | Throughput | P95 Latency | Notes |
 |---|---|---|---|---:|---:|---|
-| `v1-postgres` | `v1` | `8081` | None | 1566.45 RPS | 43.59 ms | PostgreSQL baseline |
-| `v2-redis` | `v2` | `8082` | None | 2628.61 RPS | 12.94 ms | Redis cache-aside |
-| `v3-sync-analytics` | `v3` | `8083` | Synchronous | 602.37 RPS | 119.46 ms | Write bottleneck |
-| `v4-kafka-async` | `v4` | `8084` | Asynchronous | 1147.17 RPS | 62.41 ms | Decoupled analytics |
+| `v1.0.0-postgres` | `v1` | `8081` | None | 1566.45 RPS | 43.59 ms | PostgreSQL baseline |
+| `v1.1.0-redis` | `v2` | `8082` | None | 2628.61 RPS | 12.94 ms | Redis cache-aside |
+| `v1.2.0-sync-analytics` | `v3` | `8083` | Synchronous | 602.37 RPS | 119.46 ms | Write bottleneck |
+| `v2.0.0-kafka-async` | `v4` | `8084` | Asynchronous | 1147.17 RPS | 62.41 ms | Decoupled analytics |
 
 Read [docs/benchmark.md](./docs/benchmark.md) for full methodologies, load testing profiles, and memory stability charts.
+
+## Prerequisites
+
+- **Java**: JDK 21 or higher
+- **Docker**: Docker Desktop (or engine) with Docker Compose installed
+- **k6**: Required only if you want to run the load test suites locally
+
+## Quick Start (Run Latest Version)
+
+The easiest way to run and test the latest high-throughput version (`v2.0.0-kafka-async`) of the URL shortener is using Docker Compose:
+
+1. **Boot external services** (PostgreSQL, Redis, Kafka):
+   ```bash
+   docker compose -f docker/docker-compose.v4.yml up -d
+   ```
+2. **Build and run the application**:
+   ```bash
+   ./gradlew bootRun --args='--spring.profiles.active=v4'
+   ```
+3. **Test the API**:
+   * Create a shortened URL:
+     ```bash
+     curl -X POST http://localhost:8084/api/v1/urls \
+       -H "Content-Type: application/json" \
+       -d '{"originalUrl": "https://example.com"}'
+     ```
+   * Redirect using the generated short code (e.g., `abc123`):
+     ```bash
+     curl -I http://localhost:8084/abc123
+     ```
 
 ## Documentation index
 
 - [System architecture](./docs/architecture.md): Hexagonal layers, database schemas, and request data flows.
 - [REST API reference](./docs/api.md): Endpoint payloads, JSON structures, and status code specifications.
 - [Performance benchmarks](./docs/benchmark.md): Baseline metrics, 500 VUs load tests, and 1h endurance run resource profiles.
-- [Architecture progression](./docs/versions.md): Cột mốc tiến hóa (v1 to v4) and detailed technical trade-offs.
+- [Architecture progression](./docs/versions.md): Architectural evolution (v1.0.0 to v2.0.0) and detailed technical trade-offs.
 
 ## Running benchmarks locally
 

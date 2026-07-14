@@ -1,0 +1,126 @@
+specification {
+  element user {
+    style {
+      shape person
+      color secondary
+    }
+  }
+  element system {
+    style {
+      color primary
+    }
+  }
+  element container {
+    style {
+      color blue
+    }
+  }
+  element component {
+    style {
+      color indigo
+    }
+  }
+  element database {
+    style {
+      shape storage
+      color green
+    }
+  }
+  element queue {
+    style {
+      shape queue
+      color amber
+    }
+  }
+}
+
+model {
+  // Actors
+  client = user 'User / API Client' {
+    description 'Requests URL redirection, creates short codes, and views statistics'
+  }
+
+  // System Boundary
+  urlShortener = system 'High-Throughput URL Shortener' {
+    description 'Decouples redirection flow from analytics logging'
+
+    // Containers within the system
+    apiApp = container 'Spring Boot Web API' {
+      icon tech:java
+      technology 'Spring Boot 4 / Java 21'
+      description 'Handles REST requests, implements cache-aside, and publishes to message broker'
+
+      // Components inside the API Application (Hexagonal Architecture)
+      controller = component 'Application Controller' {
+        icon tech:java
+        technology 'Spring Boot'
+        description 'UrlController exposes API endpoints: GET /{shortCode}, POST /api/v1/urls'
+      }
+
+      usecases = component 'Domain Use Cases' {
+        description 'CreateUrlUseCase, RedirectUrlUseCase, and SaveVisitUseCase'
+      }
+
+      ports = component 'Domain Ports' {
+        description 'UrlRepository, AnalyticsPort, and VisitDatabasePort'
+      }
+
+      adapters = component 'Infrastructure Adapters' {
+        description 'CachedUrlRepositoryImpl, PostgresUrlRepositoryImpl, KafkaAnalyticsAdapter'
+      }
+    }
+
+    // External Databases and Message Brokers
+    db = database 'PostgreSQL Database' {
+      icon tech:postgresql
+      description 'Relational storage for URLs and visit logs'
+    }
+
+    cache = database 'Redis Cache' {
+      icon tech:redis
+      description 'In-memory key-value store for fast redirect lookups'
+    }
+
+    broker = queue 'Apache Kafka Broker' {
+      icon tech:kafka
+      description 'Event streaming platform for asynchronous analytics events'
+    }
+  }
+
+  // Relationships
+  client -> controller 'Sends requests (HTTP)'
+  
+  // Hexagonal Architecture Inward flow
+  controller -> usecases 'Invokes business logic'
+  usecases -> ports 'Calls operations'
+  adapters -> ports 'Implements interfaces'
+
+  // Physical connections to storage / queue
+  adapters -> db 'Reads / Writes persistent data'
+  adapters -> cache 'Caches lookup mappings (Cache-aside)'
+  adapters -> broker 'Publishes visit events asynchronously'
+}
+
+views {
+  // 1. High-level System Context View
+  view index {
+    title 'System Context Diagram'
+    include client, urlShortener
+  }
+
+  // 2. Container View detailing API App and External Systems (Fixed Aggregated Relationships)
+  view containerView of urlShortener {
+    title 'Container Diagram - URL Shortener System'
+    // By including only the containers and databases (without their internal components),
+    // LikeC4 will automatically aggregate the component-level relationships and show them at the container level.
+    include client, apiApp, db, cache, broker
+  }
+
+  // 3. Component View detailing Hexagonal structure inside API App
+  view componentView of apiApp {
+    title 'Component Diagram - Spring Boot Web API'
+    include *
+    // Include external resources to show connections
+    include db, cache, broker
+  }
+}

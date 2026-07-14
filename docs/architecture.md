@@ -50,13 +50,20 @@ CREATE INDEX idx_visits_short_code ON visits(short_code);
 
 To optimize read performance on write commands, the `urls` table generates an MD5 hash of the target URL. The application uses this indexed hash columns to deduplicate URLs without querying a full text column.
 
+## Short Code Generation Logic
+
+The system generates 6-character short codes using a cryptographically secure random generator:
+
+- **Algorithm**: Selecting 6 random characters from the Base62 alphabet (`[a-zA-Z0-9]`) using `java.security.SecureRandom`.
+- **Collision Handling**: If a generated code already exists in the database (verified via the indexed `short_code` column), the application recursively generates a new code.
+- **Custom Aliases**: Users can supply a custom code (e.g., `/my-alias`). If the custom code is already taken, a `ShortCodeAlreadyExistsException` is thrown.
+- **Deduplication**: To save space, if a request does not specify a custom code, the system checks if the original URL has already been shortened (using the indexed MD5 hash of the original URL). If found and not expired, the existing short code is returned.
+
 ## Request flow paths
 
 Data flows through different architectural profiles depending on the active configuration.
 
 ### Redirect request path
-
-When a user requests a redirect, the application resolves the destination URL using a cache-aside flow:
 
 ```
 [Client] ---> [UrlController]
@@ -65,18 +72,47 @@ When a user requests a redirect, the application resolves the destination URL us
            [RedirectUrlUseCase]
                      |
                      v
-         [CachedUrlRepositoryImpl]
-          /                     \
-    (Cache Hit)             (Cache Miss)
-        /                         \
-       v                           v
-[RedisUrlCacheService]      [PostgresUrlRepositoryImpl]
-                                   |
-                                   v
-                             (Update Cache)
-                                   |
-                                   v
-                        [RedisUrlCacheService]
+          [CachedUrlRepositoryImpl]
+           /                     \
+     (Cache Hit)             (Cache Miss)
+         /                         \
+        v                           v
+ [RedisUrlCacheService]      [PostgresUrlRepositoryImpl]
+                                    |
+                                    v
+                              (Update Cache)
+                                    |
+                                    v
+                         [RedisUrlCacheService]
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client / Browser
+    participant Controller as UrlController
+    participant UC as RedirectUrlUseCase
+    participant CacheRepo as CachedUrlRepositoryImpl
+    participant Redis as Redis Cache
+    participant Postgres as Postgres DB
+    
+    Client->>Controller: GET /{shortCode}
+    Controller->>UC: redirect(shortCode)
+    UC->>CacheRepo: findByShortCode(shortCode)
+    
+    alt Cache Hit
+        CacheRepo->>Redis: Get shortCode
+        Redis-->>CacheRepo: Return URL Data
+    else Cache Miss
+        CacheRepo->>Redis: Get shortCode (Null)
+        CacheRepo->>Postgres: Query URL Data
+        Postgres-->>CacheRepo: Return URL Data
+        CacheRepo->>Redis: Set URL Data (Update Cache)
+    end
+    
+    CacheRepo-->>UC: Return URL Data
+    UC-->>Controller: Return URL Data
+    Controller-->>Client: HTTP 302 Redirect (Location Header)
 ```
 
 ### Analytics ingestion flow
@@ -109,4 +145,24 @@ The application records analytics asynchronously in the high-performance profile
                      |
                      v
              [Postgres Table]
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client / Browser
+    participant Controller as UrlController
+    participant Kafka as Kafka (url-analytics)
+    participant Consumer as KafkaAnalyticsConsumer
+    participant UC as SaveVisitUseCase
+    participant DB as Postgres Table
+    
+    Controller-->>Client: HTTP 302 Redirect (Location Header)
+    Controller->>Kafka: Publish VisitEvent (Async)
+    
+    par Consumer background thread
+        Kafka-->>Consumer: Consume Event
+        Consumer->>UC: save(visitData)
+        UC->>DB: Save VisitEntity
+    end
 ```
