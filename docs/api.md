@@ -1,8 +1,3 @@
----
-meta:
-  contentType: Reference
-  title: How do you integrate with the URL shortener API?
----
 
 # How do you integrate with the URL shortener API?
 

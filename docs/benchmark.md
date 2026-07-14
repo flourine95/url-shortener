@@ -1,8 +1,3 @@
----
-meta:
-  contentType: Reference
-  title: How do database caching and message queues impact redirect performance?
----
 
 # How do database caching and message queues impact redirect performance?
 

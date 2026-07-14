@@ -1,8 +1,3 @@
----
-meta:
-  contentType: Conceptual
-  title: How did the architecture evolve across milestones?
----
 
 # How did the architecture evolve across milestones?
 

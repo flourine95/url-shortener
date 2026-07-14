@@ -1,8 +1,3 @@
----
-meta:
-  contentType: Conceptual
-  title: How is the URL shortener structured?
----
 
 # How is the URL shortener structured?
 
