@@ -1,62 +1,58 @@
-# Benchmark URL shortener architecture
+# High-throughput URL shortener platform
 
-A URL shortener built with Spring Boot 4 and Java 21, following Hexagonal Architecture. This repo benchmarks four architectural evolutions side-by-side in isolated containerized environments.
+This project implements a high-throughput URL shortener in Java 21 and Spring Boot, exploring the performance impacts of database caching and messaging pipelines across four architectural evolutions.
 
-## Architectural evolutions and profiles
+## Key features
 
-Spring Profiles toggle the active version from a single compiled binary or Docker image:
+- **Hexagonal Architecture**: Decouples business logic from external database adapters, cache libraries, and transport protocols.
+- **Cache-Aside Pattern**: Integrates Redis read-through caching to shield PostgreSQL from repetitive lookup traffic.
+- **Event-Driven Decoupling**: Offloads click analytics logging to Apache Kafka, protecting redirect latencies from disk write speeds.
+- **k6 Load-Testing Suite**: Validates performance metrics using baseline, load, and endurance test profiles.
 
-| Version | Spring Profile | Port | URL repository | Analytics adapter | External services |
-|---|---|---|---|---|---|
-| `v1-postgres` | `v1` | `8081` | `PostgresUrlRepositoryImpl` | `NoopAnalyticsAdapter` | PostgreSQL |
-| `v2-redis` | `v2` | `8082` | `CachedUrlRepositoryImpl` (Redis + DB) | `NoopAnalyticsAdapter` | PostgreSQL + Redis |
-| `v3-sync-analytics` | `v3` | `8083` | `CachedUrlRepositoryImpl` (Redis + DB) | `SyncAnalyticsAdapter` | PostgreSQL + Redis |
-| `v4-kafka-async` | `v4` | `8084` | `CachedUrlRepositoryImpl` (Redis + DB) | `KafkaAnalyticsAdapter` | PostgreSQL + Redis + Kafka |
+## Performance snapshot
 
-## Package layout
+The following table summarizes the throughput and P95 latency metrics recorded across the four architectural profiles:
 
-The codebase is organized into four layers:
+| Milestone | Spring Profile | Port | Database Write | Throughput | P95 Latency | Notes |
+|---|---|---|---|---:|---:|---|
+| `v1-postgres` | `v1` | `8081` | None | 1566.45 RPS | 43.59 ms | PostgreSQL baseline |
+| `v2-redis` | `v2` | `8082` | None | 2628.61 RPS | 12.94 ms | Redis cache-aside |
+| `v3-sync-analytics` | `v3` | `8083` | Synchronous | 602.37 RPS | 119.46 ms | Write bottleneck |
+| `v4-kafka-async` | `v4` | `8084` | Asynchronous | 1147.17 RPS | 62.41 ms | Decoupled analytics |
 
-- **`application/`**: REST controllers and HTTP request/response DTOs
-- **`domain/`**: Domain models, command/query DTOs, and use case interfaces (input ports)
-- **`infrastructure/`**: Database persistence, Spring Data repositories, cache, messaging adapters (Kafka), and mappers
-- **`shared/`**: Configurations, exception handling, and response wrappers (`ApiResult`)
+Read [docs/benchmark.md](./docs/benchmark.md) for full methodologies, load testing profiles, and memory stability charts.
 
-## How to build and run
+## Documentation index
 
-### Prerequisites
+- [System architecture](./docs/architecture.md): Hexagonal layers, database schemas, and request data flows.
+- [REST API reference](./docs/api.md): Endpoint payloads, JSON structures, and status code specifications.
+- [Performance benchmarks](./docs/benchmark.md): Baseline metrics, 500 VUs load tests, and 1h endurance run resource profiles.
+- [Architecture progression](./docs/versions.md): Cột mốc tiến hóa (v1 to v4) and detailed technical trade-offs.
 
-- Java 21 (JDK 21)
-- Docker and Docker Compose
-- [k6](https://k6.io/) for load testing
+## Running benchmarks locally
 
-### Build the application
+Ensure you have Docker and k6 installed on your system.
 
-```bash
-./gradlew build -x test
-```
+### Option 1: Run the baseline comparison benchmark
 
-### Build the Docker image
-
-```bash
-docker build -t url-shortener-app:latest -f docker/Dockerfile .
-```
-
-### Run benchmarks
-
-On Linux or WSL2 (install `jq` first with `sudo apt install jq`):
+This option runs a quick baseline test for 30s across all four versions to verify relative performance trends:
 
 ```bash
-./benchmark/run-benchmarks.sh
+# Run inside Ubuntu (WSL2)
+./benchmark/scripts/run-benchmarks.sh
 ```
 
-On Windows (PowerShell):
+### Option 2: Run load and endurance tests on the Kafka profile
 
-```powershell
-powershell -ExecutionPolicy Bypass -File benchmark/run-benchmarks.ps1
+This option opens a terminal prompt manager to execute advanced tests against the `v4-kafka-async` profile:
+
+```bash
+# Run inside Windows PowerShell or Ubuntu terminal
+python3 benchmark/scripts/run_v4_advanced.py
 ```
 
-## Documentation
+The script displays an interactive menu to choose between:
 
-- [docs/versions.md](docs/versions.md): architectural evolution across four tagged milestones
-- [docs/benchmark.md](docs/benchmark.md): load testing methodology, performance results, and manual test steps
+1. **Load Test**: 500 VUs running for 10m.
+2. **Endurance Test**: 200 VUs running for 1h (generates CPU and memory logging CSV files).
+3. **Custom Run**: Customizable VU count, durations, and resource logging setups.

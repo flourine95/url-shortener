@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Setup directories
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
-BENCHMARK_DIR="$ROOT_DIR/benchmark"
+BENCHMARK_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="$(dirname "$BENCHMARK_DIR")"
 
 # Check if jq is installed
 if ! command -v jq &> /dev/null; then
@@ -68,10 +68,10 @@ for config in "${CONFIGS[@]}"; do
     echo "Service is healthy! Initializing 10s warm-up and 30s load test..."
     
     # Run k6 load test
-    json_summary="$BENCHMARK_DIR/summary-$name.json"
+    json_summary="$BENCHMARK_DIR/data/summary-$name.json"
     target_url="http://localhost:$port"
     
-    k6 run --summary-export="$json_summary" -e TARGET_URL="$target_url" "$BENCHMARK_DIR/k6-script.js"
+    k6 run --summary-export="$json_summary" -e TARGET_URL="$target_url" "$BENCHMARK_DIR/k6/k6-script.js"
     
     # Stop stack and clean volumes
     echo "Stopping Stack: $name..."
@@ -132,7 +132,7 @@ if [ -f "$ROOT_DIR/docs/benchmark.md" ]; then
     done
     
     # We replace the table block in docs/benchmark.md. 
-    # To do this safely in bash, we'll write the results to benchmark/results.md
-    echo -e "$table_content" > "$BENCHMARK_DIR/results.md"
-    echo "Results table saved to benchmark/results.md"
+    # To do this safely in bash, we'll write the results to benchmark/reports/results.md
+    echo -e "$table_content" > "$BENCHMARK_DIR/reports/results.md"
+    echo "Results table saved to benchmark/reports/results.md"
 fi

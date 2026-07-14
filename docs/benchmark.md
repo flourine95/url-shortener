@@ -1,52 +1,87 @@
-# Benchmark methodology and performance results
+---
+meta:
+  contentType: Reference
+  title: How do database caching and message queues impact redirect performance?
+---
 
-Load testing methodology, parameters, and a side-by-side comparison of four architectural revisions of the URL shortener.
+# How do database caching and message queues impact redirect performance?
 
-## Benchmarking methodology
+This page presents the load testing methodology, parameters, and performance results across four architectural revisions of the URL shortener.
 
-Four constraints keep the results comparable across versions:
+## Testing environment
 
-1. **Isolated environments**: Each version runs in its own Docker Compose stack. Databases, Redis caches, and Kafka brokers are separate to prevent cross-contamination of cache states, TCP connections, or disk queues
-2. **Resource-constrained VM**: The benchmark runs inside a WSL2 Linux VM allocated 4 vCPUs, 8 GB memory, and 2 GB swap. This keeps the test closer to a constrained deployment and avoids relying on the full host capacity
-3. **Warm-up phase**: Each run starts with a 10 s warm-up (10 concurrent virtual users) to prime JIT compilation, database connections, and cache pools. A 30 s load phase (50 concurrent virtual users) follows
-4. **No redirect follow**: The k6 script sets `redirects: 0` to measure only the shortener's core processing latency, without adding network round-trips to external target sites
+All benchmarks run under isolated Docker containers to prevent queue sharing or TCP socket reuse. The test host runs WSL2 on an AMD64 architecture with 4 vCPUs and 8 GB of allocated memory.
 
-## Performance results
+The test suite exercises the system using three test scenarios:
 
-Measured inside WSL2 Ubuntu 22.04 LTS with Docker Desktop WSL2 integration. Host machine: 12th Gen Intel Core i5-12450H, 24 GB RAM, Windows 11.
+- **Baseline Comparison**: 50 Virtual Users (VUs) running a GET-only workload for 30s after a 10s warm-up. This measures clean redirect speed.
+- **Load Test**: 500 VUs running a mixed workload (90% GET redirects, 10% POST writes) for 10m on the Kafka asynchronous profile (`v4-kafka-async`).
+- **Endurance Test**: 200 VUs running a mixed workload (90% GET redirects, 10% POST writes) for 1h on the Kafka asynchronous profile (`v4-kafka-async`) to monitor CPU and memory stability.
 
-| Version | RPS | Total requests | Min latency | Median latency | P95 latency | P90 latency | Error rate |
-|---|---|---|---|---|---|---|---|
-| `v1-postgres` | 2,517.01 | 104,528 | 0.27 ms | 2.32 ms | 17.51 ms | 12.22 ms | 0.00% |
-| `v2-redis` | 3,077.79 | 127,589 | 0.25 ms | 1.50 ms | 5.37 ms | 3.85 ms | 0.00% |
-| `v3-sync-analytics` | 1,488.52 | 61,741 | 2.24 ms | 12.54 ms | 36.53 ms | 28.04 ms | 0.00% |
-| `v4-kafka-async` | 2,319.82 | 96,092 | 0.28 ms | 4.10 ms | 17.78 ms | 12.89 ms | 0.00% |
+## Baseline comparison results
 
-### How each version affects throughput and latency
+The baseline comparison measures throughput and latency across all four profiles under a GET-only redirect workload.
 
-- **Caching optimization**: Adding Redis caching in `v2-redis` raised RPS from 2,517 to 3,077 (22% increase) and dropped P95 latency from 17.51 ms to 5.37 ms (69% reduction). Redis serves cached URL lookups in under 2 ms, bypassing Postgres entirely on cache hits
-- **Synchronous write bottleneck**: Adding synchronous analytics in `v3-sync-analytics` dropped RPS from 3,077 to 1,488 (52% decrease) and pushed P95 latency to 36.53 ms. Every redirect request blocks until the visit record commits to Postgres
-- **Asynchronous analytics recovery**: Offloading analytics to Kafka in `v4-kafka-async` raised RPS back to 2,319 (56% improvement over `v3`) and cut P95 latency to 17.78 ms. The redirect handler publishes a JSON event to Kafka and returns HTTP 302 immediately. A background consumer persists the visit record to Postgres without blocking the client
+| Version | Profile | Throughput | Median Latency | P95 Latency | Error Rate |
+|---|---|---:|---:|---:|---:|
+| **`v1-postgres`** | `v1` | 1566.45 RPS | 9.08 ms | 43.59 ms | 0.00% |
+| **`v2-redis`** | `v2` | 2628.61 RPS | 2.60 ms | 12.94 ms | 0.00% |
+| **`v3-sync-analytics`** | `v3` | 602.37 RPS | 44.18 ms | 119.46 ms | 0.00% |
+| **`v4-kafka-async`** | `v4` | 1147.17 RPS | 16.55 ms | 62.41 ms | 0.00% |
 
-## Testing a specific version manually
+### Throughput comparison (RPS)
 
-To spin up a single stack and explore the APIs:
+The following chart illustrates the throughput comparison in Requests per Second (RPS) across versions:
 
-1. Start the stack (version 4 in this example):
-   ```bash
-   docker compose -f docker/docker-compose.v4.yml up -d
-   ```
-2. Shorten a URL:
-   ```bash
-   curl -X POST http://localhost:8084/api/urls \
-     -H "Content-Type: application/json" \
-     -d '{"originalUrl": "https://github.com", "customCode": "myrepo"}'
-   ```
-3. Trigger redirection:
-   ```bash
-   curl -i http://localhost:8084/myrepo
-   ```
-4. Tear down the stack when done:
-   ```bash
-   docker compose -f docker/docker-compose.v4.yml down -v
-   ```
+![Throughput Comparison](./images/throughput_comparison.png)
+
+### Latency comparison (Median vs P95)
+
+The following chart illustrates the median (blue) and P95 (red) latency across versions:
+
+![Latency Comparison](./images/latency_comparison.png)
+
+### Technical insights
+
+- **Caching acceleration**: Introducing the Redis read-through cache in `v2-redis` boosts throughput by 67% over the database baseline. This cuts P95 latency by 70%, as Redis serves hot redirects without hitting the PostgreSQL disk queues.
+- **Synchronous analytics write bottleneck**: Recording visit entries synchronously in `v3-sync-analytics` degrades performance. Throughput drops by 77% compared to `v2-redis`, and P95 latency jumps to 119.46 ms because the system blocks HTTP worker threads until PostgreSQL completes the transaction write.
+- **Asynchronous messaging decoupling**: Decoupling writes using Kafka in `v4-kafka-async` restores performance. Throughput increases by 90% over the synchronous baseline, and P95 latency falls back to 62.41 ms. The API publishes event payloads to the topic and returns the HTTP 302 immediately, offloading the database commit work to a consumer thread.
+
+## Load test results (v4-kafka-async)
+
+The Load Test pushes the Kafka asynchronous profile to 500 VUs running a mixed workload for 10m.
+
+- **Total Requests**: 1,259,954
+- **Throughput**: 2,095.84 RPS
+- **Error Rate**: 0.00% (100% of checks passed)
+  - `POST status is 201` checks passed: 125,605
+  - `GET status is 302` checks passed: 1,134,249
+- **Median Latency**: 211.21 ms
+- **P95 Latency**: 397.38 ms
+
+Under heavy load, Tomcat worker queues and connection pools remain stable, delivering zero request failures across more than one million operations.
+
+## Endurance test results (v4-kafka-async)
+
+The Endurance Test runs the Kafka asynchronous profile under a stable load of 200 VUs for 1h to monitor system resource consumption.
+
+- **Total Requests**: 2,475,167
+- **Throughput**: 687.5 RPS
+- **Error Rate**: 0.00% (100% of checks passed)
+
+### Resource stability analysis
+
+Container resources stabilize within the first 3m and maintain a flat line profile for the remaining duration:
+
+- **Application container (Spring Boot)**: Memory scales from 522.0 MB up to a flat 625.5 MB. CPU usage hovers between 45% and 55% once JIT compilation completes.
+- **Database container (PostgreSQL)**: Memory holds steady at 195.1 MB. CPU usage scales with connection pool activity, peaking around 280% on multi-core allocations during write peaks.
+- **Cache container (Redis)**: Memory utilization settles at 78.39 MB, matching the TTL cache expiry limits. CPU remains under 5%.
+- **Message queue container (Kafka)**: Memory footprint stays flat at 555.0 MB, while CPU usage averages 5%.
+
+The flat memory metrics confirm the absence of memory leaks in the Java application and connection adapters.
+
+### Resource utilization timeline (1h Endurance Test)
+
+The following chart plots the memory consumption in Megabytes (MB) across containers during the one-hour test:
+
+![Resource Stability](./images/resource_stability.png)

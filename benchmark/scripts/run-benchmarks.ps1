@@ -65,10 +65,10 @@ foreach ($v in $versions) {
     Write-Host "Service is healthy! Initializing 10s warm-up and 30s load test..." -ForegroundColor Green
     
     # Run k6 load test
-    $jsonSummary = "$BenchmarkDir/summary-$($v.Name).json"
-    $targetUrl = "http://localhost:$($v.Port)"
+    $jsonSummary = "$BenchmarkDir/data/summary-$($v.Name).json"
+    $targetUrl = "http://localhost:$v.Port"
     
-    & k6 run --summary-export=$jsonSummary -e TARGET_URL=$targetUrl "$BenchmarkDir/k6-script.js"
+    & k6 run --summary-export=$jsonSummary -e TARGET_URL=$targetUrl "$BenchmarkDir/k6/k6-script.js"
 
     # Stop stack and clean volumes
     Write-Host "Stopping Stack: $($v.Name)..." -ForegroundColor Yellow
@@ -126,6 +126,6 @@ if (Test-Path "$RootDir/docs/benchmark.md") {
     $mdContent | Out-File -FilePath "$RootDir/docs/benchmark.md" -Encoding utf8 -Force
     Write-Host "Results saved directly to docs/benchmark.md" -ForegroundColor Green
 } else {
-    $mdTable | Out-File -FilePath "$BenchmarkDir/results.md" -Encoding utf8 -Force
-    Write-Host "Results saved to benchmark/results.md" -ForegroundColor Green
+    $mdTable | Out-File -FilePath "$BenchmarkDir/reports/results.md" -Encoding utf8 -Force
+    Write-Host "Results saved to benchmark/reports/results.md" -ForegroundColor Green
 }

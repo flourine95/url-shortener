@@ -1,0 +1,241 @@
+{
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "status is 302": {
+                    "passes": 47679,
+                    "fails": 0,
+                    "name": "status is 302",
+                    "path": "::status is 302",
+                    "id": "9ef425e11baabefe00b04a8500db882d"
+                },
+                "has Location header": {
+                    "name": "has Location header",
+                    "path": "::has Location header",
+                    "id": "a5bcc5a2a32157f0e3dcaa526ac76eaa",
+                    "passes": 47679,
+                    "fails": 0
+                }
+            },
+        "name": ""
+    },
+    "metrics": {
+        "http_req_blocked": {
+            "max": 11.775004,
+            "p(90)": 0.009762200000000004,
+            "p(95)": 0.013071299999999996,
+            "avg": 0.014591394043408139,
+            "min": 0.000983,
+            "med": 0.004565
+        },
+        "iteration_duration": {
+            "avg": 33.51665854597722,
+            "min": 10.823623,
+            "med": 27.303090500000003,
+            "max": 336.487685,
+            "p(90)": 56.498532499999996,
+            "p(95)": 73.3696585
+        },
+        "vus": {
+            "max": 50,
+            "value": 50,
+            "min": 0
+        },
+        "data_sent": {
+            "count": 3452592,
+            "rate": 82896.47195753014
+        },
+        "checks": {
+            "passes": 95358,
+            "fails": 0,
+            "value": 1
+        },
+        "iterations": {
+            "rate": 1144.69714262421,
+            "count": 47676
+        },
+        "http_reqs": {
+            "count": 47779,
+            "rate": 1147.1701648091732
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "max": 5.863407,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.004979727641851026,
+            "min": 0
+        },
+        "http_req_sending": {
+            "avg": 0.03691193499236078,
+            "min": -2.393698,
+            "med": 0.013339,
+            "max": 19.622537,
+            "p(90)": 0.046684,
+            "p(95)": 0.10445769999999997
+        },
+        "http_req_waiting": {
+            "max": 705.134437,
+            "p(90)": 45.437281000000006,
+            "p(95)": 62.22232339999999,
+            "avg": 22.61788971843296,
+            "min": 0.562245,
+            "med": 16.395294
+        },
+        "vus_max": {
+            "value": 50,
+            "min": 50,
+            "max": 50
+        },
+        "data_received": {
+            "count": 10401346,
+            "rate": 249735.52826675388
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.10904975196215948,
+            "min": 0.008509,
+            "med": 0.055798,
+            "max": 25.086848,
+            "p(90)": 0.19546800000000028,
+            "p(95)": 0.31253979999999987
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 22.763851405387417,
+            "min": 0.577563,
+            "med": 16.551774,
+            "max": 709.874309,
+            "p(90)": 45.5923152,
+            "p(95)": 62.41207039999998
+        },
+        "http_req_duration": {
+            "avg": 22.763851405387417,
+            "min": 0.577563,
+            "med": 16.551774,
+            "max": 709.874309,
+            "p(90)": 45.5923152,
+            "p(95)": 62.41207039999998,
+            "thresholds": {
+                "p(95)<200": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 47779,
+            "value": 0
+        }
+    },
+    "setup_data": {
+        "shortCodes": [
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP",
+            "FQFEtP"
+        ]
+    }
+}

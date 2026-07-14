@@ -1,0 +1,241 @@
+{
+    "metrics": {
+        "http_req_receiving": {
+            "avg": 0.104834990748109,
+            "min": 0.008144,
+            "med": 0.050679,
+            "max": 53.574285,
+            "p(90)": 0.18100119999999997,
+            "p(95)": 0.2976727999999999
+        },
+        "iteration_duration": {
+            "avg": 24.965057827819418,
+            "min": 10.642088,
+            "med": 19.782109,
+            "max": 295.221558,
+            "p(90)": 42.584974,
+            "p(95)": 54.5641065
+        },
+        "checks": {
+            "passes": 127990,
+            "fails": 0,
+            "value": 1
+        },
+        "vus_max": {
+            "max": 50,
+            "value": 50,
+            "min": 50
+        },
+        "http_req_failed": {
+            "fails": 64095,
+            "passes": 0,
+            "value": 0
+        },
+        "vus": {
+            "value": 50,
+            "min": 10,
+            "max": 50
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "data_received": {
+            "count": 13945110,
+            "rate": 340811.25036313245
+        },
+        "http_req_duration": {
+            "avg": 14.270148906373526,
+            "min": 0.534783,
+            "med": 9.076381,
+            "max": 311.73054,
+            "p(90)": 31.762319199999993,
+            "p(95)": 43.59430539999999,
+            "thresholds": {
+                "p(95)<200": false
+            }
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 6.595916,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.003931863499492939
+        },
+        "http_req_blocked": {
+            "avg": 0.012688090069428264,
+            "min": 0.001036,
+            "med": 0.004475,
+            "max": 20.437286,
+            "p(90)": 0.009527599999999999,
+            "p(95)": 0.012455599999999992
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 31.762319199999993,
+            "p(95)": 43.59430539999999,
+            "avg": 14.270148906373526,
+            "min": 0.534783,
+            "med": 9.076381,
+            "max": 311.73054
+        },
+        "http_req_sending": {
+            "p(95)": 0.11230979999999983,
+            "avg": 0.043495034901318064,
+            "min": 0.00291,
+            "med": 0.012977,
+            "max": 39.718732,
+            "p(90)": 0.04658179999999998
+        },
+        "iterations": {
+            "rate": 1563.906826262913,
+            "count": 63991
+        },
+        "http_reqs": {
+            "count": 64095,
+            "rate": 1566.4485322829994
+        },
+        "data_sent": {
+            "count": 4627272,
+            "rate": 113088.12595170012
+        },
+        "http_req_waiting": {
+            "max": 309.181493,
+            "p(90)": 31.620705599999997,
+            "p(95)": 43.40325059999998,
+            "avg": 14.12181888072384,
+            "min": 0.470499,
+            "med": 8.925864
+        }
+    },
+    "setup_data": {
+        "shortCodes": [
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8",
+            "EOjZF8"
+        ]
+    },
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "status is 302": {
+                    "name": "status is 302",
+                    "path": "::status is 302",
+                    "id": "9ef425e11baabefe00b04a8500db882d",
+                    "passes": 63995,
+                    "fails": 0
+                },
+                "has Location header": {
+                    "name": "has Location header",
+                    "path": "::has Location header",
+                    "id": "a5bcc5a2a32157f0e3dcaa526ac76eaa",
+                    "passes": 63995,
+                    "fails": 0
+                }
+            },
+        "name": ""
+    }
+}

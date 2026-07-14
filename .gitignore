@@ -26,3 +26,6 @@ docker/pg_data/
 docker/redis_data/
 docker/kafka_data/
 docker/zookeeper_data/
+
+# Benchmark outputs
+benchmark/reports/

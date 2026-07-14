@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
                 ));
         
         ApiResult<Map<String, String>> result = new ApiResult<>(errors, null, "VALIDATION_ERROR", "Validation failed", false);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(result);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(result);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

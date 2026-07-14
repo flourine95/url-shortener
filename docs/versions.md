@@ -1,40 +1,63 @@
-# URL shortener architectural evolutions
+---
+meta:
+  contentType: Conceptual
+  title: How did the architecture evolve across milestones?
+---
 
-Four tagged milestones track how the URL shortener evolved from a Postgres-only redirect service to a cached, event-driven system with asynchronous analytics.
+# How did the architecture evolve across milestones?
+
+This page traces the evolution of the URL shortener architecture from a simple database-backed implementation to a high-throughput, event-driven system.
 
 ## v1.0.0-postgres: PostgreSQL redirection
 
-The baseline version. Redirect lookups query Postgres directly. No analytics are recorded.
+The baseline architecture queries PostgreSQL directly for every redirect request. This setup serves as the performance baseline.
 
-- **URL repository**: `PostgresUrlRepositoryImpl` runs standard JPA queries against the `urls` table
-- **Analytics**: `NoopAnalyticsAdapter` (disabled)
-- **Core components**: `UrlData` domain record, `CreateUrlUseCase`, `RedirectUrlUseCase`
+- **URL Repository**: `PostgresUrlRepositoryImpl` queries the database table using Spring Data JPA.
+- **Analytics**: The configuration disables analytics tracking using `NoopAnalyticsAdapter`.
+- **Core Components**: The domain defines the `UrlData` record and use case ports `CreateUrlUseCase` and `RedirectUrlUseCase`.
 
-## v1.1.0-redis: read-through caching
+### Advantages and disadvantages
 
-Adds a Redis cache layer using the Decorator pattern to shield Postgres from repeated read queries.
+- **Pros**: The system uses a simple design with minimal moving parts.
+- **Cons**: The database server handles every read query, which limits throughput under high concurrent traffic.
 
-- **URL repository**: `CachedUrlRepositoryImpl` wraps `PostgresUrlRepositoryImpl`
-  - On write: persists to Postgres and refreshes Redis
-  - On read: checks Redis first, then falls back to Postgres on cache miss
-- **Analytics**: `NoopAnalyticsAdapter` (disabled)
-- **Added dependency**: `spring-boot-starter-data-redis`, `jackson-databind`
+## v1.1.0-redis: Read-through caching
 
-## v1.2.0-sync-analytics: synchronous analytics
+To shield the primary database from redundant read traffic, the architecture adds a Redis cache using the Decorator pattern.
 
-Records visit events on every redirect. The analytics write happens synchronously inside the redirect request, blocking the HTTP response until Postgres commits.
+- **URL Repository**: `CachedUrlRepositoryImpl` decorates the PostgreSQL implementation.
+- **Write Path**: Persists data to PostgreSQL and updates the Redis cache state.
+- **Read Path**: Queries Redis first, falling back to PostgreSQL on cache misses and updating Redis.
+- **Dependencies**: Adds `spring-boot-starter-data-redis` and `jackson-databind`.
 
-- **URL repository**: `CachedUrlRepositoryImpl` (Redis + DB)
-- **Analytics**: `SyncAnalyticsAdapter` implements `AnalyticsPort`. It delegates to `SaveVisitUseCase`, which writes visit metadata (`shortCode`, `ipAddress`, `userAgent`, `clickedAt`) to Postgres
-- **Added components**: `SaveVisitUseCase` (input port), `VisitDatabasePort` (output port)
+### Advantages and disadvantages
 
-## v2.0.0-kafka-async: asynchronous event-driven analytics
+- **Pros**: Throughput increases by serving hot redirect paths directly from memory.
+- **Cons**: High write loads still block on database writes, and cache sync lags can occur.
 
-Replaces synchronous database writes with Kafka event publishing. The redirect handler returns HTTP 302 immediately. A background consumer persists visit records.
+## v1.2.0-sync-analytics: Synchronous database writes
 
-- **URL repository**: `CachedUrlRepositoryImpl` (Redis + DB)
-- **Analytics**: `KafkaAnalyticsAdapter` implements `AnalyticsPort`. It publishes visit JSON payloads to the `url-analytics` Kafka topic and returns without waiting for persistence
-- **Consumer**: `KafkaAnalyticsConsumer` listens to the topic and invokes `SaveVisitUseCase` in the background
-- **Added dependency**: `spring-boot-starter-kafka`
+This milestone records analytics metrics for every redirect event, writing visit metadata directly to PostgreSQL before returning the HTTP response.
 
-This version strikes the best balance when you need fast redirects and durable analytics: redirect latency stays close to `v2` while visit data still reaches Postgres through the Kafka consumer.
+- **URL Repository**: The cache-aside repository handles redirect lookups.
+- **Analytics Adapter**: `SyncAnalyticsAdapter` implements `AnalyticsPort` and invokes `SaveVisitUseCase` synchronously.
+- **Components**: The system adds `SaveVisitUseCase` and `VisitDatabasePort` to persist visit logs.
+
+### Advantages and disadvantages
+
+- **Pros**: Provides transactional guarantees that ensure every click records to PostgreSQL.
+- **Cons**: Redirect speed drops because HTTP request threads block until PostgreSQL finishes disk commits.
+
+## v2.0.0-kafka-async: Asynchronous event-driven analytics
+
+To decouple redirect execution from analytics persistence, the system publishes visit events to Apache Kafka.
+
+- **URL Repository**: Serves redirect queries from Redis.
+- **Analytics Adapter**: `KafkaAnalyticsAdapter` publishes visit DTOs as JSON strings to the `url-analytics` topic.
+- **Consumer**: `KafkaAnalyticsConsumer` listens to the topic and writes visit logs to PostgreSQL in the background.
+- **Dependencies**: Adds `spring-boot-starter-kafka`.
+
+### Advantages and disadvantages
+
+- **Pros**: The redirect path returns HTTP 302 location headers immediately, recovering the high throughput of the cached read path.
+- **Cons**: Adds operational complexity with the introduction of a Kafka message broker.
