@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UrlMapper {
-
     UrlData toDomain(UrlEntity entity);
     UrlEntity toEntity(UrlData domain);
 }

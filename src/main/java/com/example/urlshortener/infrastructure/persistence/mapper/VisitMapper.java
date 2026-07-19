@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface VisitMapper {
-
     VisitData toDomain(VisitEntity entity);
     VisitEntity toEntity(VisitData domain);
 }
