@@ -2,11 +2,11 @@ package com.example.urlshortener.infrastructure.kafka;
 
 import com.example.urlshortener.domain.url.dto.VisitData;
 import com.example.urlshortener.domain.url.repository.AnalyticsPort;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class KafkaAnalyticsAdapter implements AnalyticsPort {
                         log.info("Successfully published visit to Kafka topic {} for shortCode {}", TOPIC, visitData.shortCode());
                     }
                 });
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to serialize VisitData for Kafka: {}", visitData.shortCode(), e);
         }
     }

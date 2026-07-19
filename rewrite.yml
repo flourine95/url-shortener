@@ -1,0 +1,27 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.example.urlshortener.CleanupSuite
+displayName: URL Shortener Code Cleanup Suite
+description: Aggregated code cleanups including static analysis, logging, testing best practices, and custom static imports.
+recipeList:
+  - org.openrewrite.java.OrderImports
+  - org.openrewrite.java.RemoveUnusedImports
+  - org.openrewrite.java.UpdateSourcePositions
+  - org.openrewrite.java.testing.junit5.JUnit5BestPractices
+  - org.openrewrite.java.testing.mockito.MockitoBestPractices
+  - org.openrewrite.java.testing.testcontainers.TestContainersBestPractices
+  - org.openrewrite.java.UseStaticImport:
+      methodPattern: org.assertj.core.api.Assertions assertThat(..)
+  - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
+  - org.openrewrite.staticanalysis.CommonStaticAnalysis
+  - org.openrewrite.java.logging.slf4j.Slf4jBestPractices
+  - org.openrewrite.java.spring.NoAutowiredOnConstructor
+  - org.openrewrite.java.spring.NoRepoAnnotationOnRepoInterface
+  - org.openrewrite.gradle.RemoveRedundantDependencyVersions
+  - org.openrewrite.java.logging.SystemPrintToLogging:
+      loggerName: log
+      useSlf4j: true
+  - org.openrewrite.java.logging.PrintStackTraceToLogError
+  - org.openrewrite.java.spring.boot3.EnableVirtualThreads
+  - org.openrewrite.java.spring.boot3.PreciseBeanType
+  - org.openrewrite.java.spring.boot3.ReplaceStringLiteralsWithConstants

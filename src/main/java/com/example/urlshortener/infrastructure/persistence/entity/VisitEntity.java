@@ -31,6 +31,8 @@ public class VisitEntity {
 
     @PrePersist
     protected void onCreate() {
-        clickedAt = Instant.now();
+        if (clickedAt == null) {
+            clickedAt = Instant.now();
+        }
     }
 }

@@ -13,10 +13,12 @@ public interface VisitJpaRepository extends JpaRepository<VisitEntity, Long> {
     Optional<VisitEntity> findTopByShortCodeOrderByClickedAtDesc(String shortCode);
 
     @Query("""
-        select v.shortCode as shortCode, count(v.id) as totalClicks, max(v.clickedAt) as lastClickedAt
+        select new com.example.urlshortener.infrastructure.persistence.repository.VisitStats(
+            v.shortCode, count(v.id), max(v.clickedAt)
+        )
         from VisitEntity v
         where v.shortCode in :shortCodes
         group by v.shortCode
         """)
-    List<VisitStatsProjection> findStatsByShortCodes(@Param("shortCodes") List<String> shortCodes);
+    List<VisitStats> findStatsByShortCodes(@Param("shortCodes") List<String> shortCodes);
 }

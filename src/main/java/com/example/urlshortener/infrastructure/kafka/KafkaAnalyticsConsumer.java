@@ -2,13 +2,13 @@ package com.example.urlshortener.infrastructure.kafka;
 
 import com.example.urlshortener.domain.url.dto.VisitData;
 import com.example.urlshortener.domain.url.usecase.SaveVisitUseCase;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component
@@ -25,7 +25,7 @@ public class KafkaAnalyticsConsumer {
             VisitData visitData = objectMapper.readValue(json, VisitData.class);
             saveVisitUseCase.execute(visitData);
             log.info("Successfully saved visit record for shortCode {}", visitData.shortCode());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to deserialize VisitData from Kafka event: {}", json, e);
         }
     }

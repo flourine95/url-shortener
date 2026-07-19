@@ -5,13 +5,13 @@ This page describes the structural architecture of the high-throughput URL short
 
 ## Core architectural pattern
 
-The application structures dependencies using Hexagonal Architecture, decoupling core business logic from databases, caches, and transport protocols. Inside the package structure, classes reference outward adapters only through interfaces called ports, which ensures clean testability and modularity.
+The application structures dependencies using Hexagonal Architecture, decoupling core business logic from databases, caches, and transport protocols. Inside the package structure, the business logic references external services primarily through interfaces called ports (such as UrlRepository and AnalyticsPort) to ensure clean testability and modularity.
 
 The application organizes source files into four architectural layers:
 
-- **domain**: Defines the core business models, input ports (use cases), and output ports (repository interfaces). This layer depends on zero external libraries or Spring Framework annotations.
+- **domain**: Defines the core business models, use cases (business logic services), and output ports (repository interfaces). This layer depends on zero external libraries or Spring Framework annotations.
 - **application**: Manages incoming traffic through controllers and validates data transfer objects (DTOs) for Web requests.
-- **infrastructure**: Implements outbound ports using Spring Data JPA, Redis caches, Kafka producers, and MapStruct mappers.
+- **infrastructure**: Implements outbound repositories and adapters using Spring Data JPA, Redis caches, Kafka producers, and MapStruct mappers.
 - **shared**: Holds global configurations, exception handler strategies, and uniform response structures.
 
 ## Database schema design
@@ -135,13 +135,13 @@ The application records analytics asynchronously in the high-performance profile
              (Consume Event)
                      |
                      v
-         [KafkaAnalyticsConsumer]
+          [KafkaAnalyticsConsumer]
                      |
                      v
             [SaveVisitUseCase]
                      |
                      v
-      [PostgresVisitDatabaseAdapter]
+             [VisitRepository]
                      |
                      v
              [Postgres Table]
