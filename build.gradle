@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openrewrite.rewrite' version '7.37.0'
 }
 
 group = 'com.example'
@@ -17,13 +18,23 @@ repositories {
 	mavenCentral()
 }
 
+rewrite {
+	activeRecipe('com.example.urlshortener.CleanupSuite')
+}
+
 dependencies {
+	// OpenRewrite Recipe Dependencies
+	rewrite platform("org.openrewrite.recipe:rewrite-recipe-bom:latest.release")
+	rewrite "org.openrewrite.recipe:rewrite-testing-frameworks"
+	rewrite "org.openrewrite.recipe:rewrite-spring"
+	rewrite "org.openrewrite.recipe:rewrite-static-analysis"
+	rewrite "org.openrewrite.recipe:rewrite-logging-frameworks"
+
 	// Web & Validation
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	
 	// Jackson (required for JSON serialization in Redis caching)
-	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	
 	// Database & Persistence
@@ -60,8 +71,8 @@ dependencies {
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
-	testImplementation 'org.testcontainers:postgresql:1.21.4'
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'

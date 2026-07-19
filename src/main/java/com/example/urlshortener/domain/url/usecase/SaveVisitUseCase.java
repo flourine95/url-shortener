@@ -1,7 +1,18 @@
 package com.example.urlshortener.domain.url.usecase;
 
 import com.example.urlshortener.domain.url.dto.VisitData;
+import com.example.urlshortener.domain.url.repository.VisitDatabasePort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface SaveVisitUseCase {
-    void execute(VisitData visitData);
+@Service
+@RequiredArgsConstructor
+public class SaveVisitUseCase {
+    private final VisitDatabasePort visitDatabasePort;
+
+    @Transactional
+    public void execute(VisitData visitData) {
+        visitDatabasePort.save(visitData);
+    }
 }

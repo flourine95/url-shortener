@@ -1,7 +1,21 @@
 package com.example.urlshortener.domain.url.usecase;
 
 import com.example.urlshortener.domain.url.dto.UrlStats;
+import com.example.urlshortener.domain.url.exception.UrlNotFoundException;
+import com.example.urlshortener.domain.url.repository.UrlRepository;
+import com.example.urlshortener.domain.url.repository.VisitDatabasePort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public interface UrlStatsUseCase {
-    UrlStats execute(String shortCode);
+@Service
+@RequiredArgsConstructor
+public class UrlStatsUseCase {
+    private final UrlRepository urlRepository;
+    private final VisitDatabasePort visitDatabasePort;
+
+    public UrlStats execute(String shortCode) {
+        urlRepository.findByShortCode(shortCode)
+            .orElseThrow(() -> new UrlNotFoundException(shortCode));
+        return visitDatabasePort.stats(shortCode);
+    }
 }

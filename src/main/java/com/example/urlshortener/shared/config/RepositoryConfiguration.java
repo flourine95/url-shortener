@@ -1,6 +1,5 @@
 package com.example.urlshortener.shared.config;
 
-import com.example.urlshortener.domain.url.repository.AnalyticsPort;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import com.example.urlshortener.domain.url.usecase.SaveVisitUseCase;
 import com.example.urlshortener.infrastructure.cache.RedisUrlCacheService;
@@ -30,7 +29,7 @@ public class RepositoryConfiguration {
     @Bean
     @Profile({"v2", "v3", "v4"})
     @Primary
-    public UrlRepository urlRepositoryCached(
+    public CachedUrlRepositoryImpl urlRepositoryCached(
             @Qualifier("postgresUrlRepository") UrlRepository postgresUrlRepository,
             RedisUrlCacheService cacheService) {
         return new CachedUrlRepositoryImpl(postgresUrlRepository, cacheService);
@@ -38,19 +37,19 @@ public class RepositoryConfiguration {
 
     @Bean
     @Profile({"v1", "v2"})
-    public AnalyticsPort analyticsPortV1V2() {
+    public NoopAnalyticsAdapter analyticsPortV1V2() {
         return new NoopAnalyticsAdapter();
     }
 
     @Bean
     @Profile("v3")
-    public AnalyticsPort analyticsPortV3(SaveVisitUseCase saveVisitUseCase) {
+    public SyncAnalyticsAdapter analyticsPortV3(SaveVisitUseCase saveVisitUseCase) {
         return new SyncAnalyticsAdapter(saveVisitUseCase);
     }
 
     @Bean
     @Profile("v4")
-    public AnalyticsPort analyticsPortV4(
+    public KafkaAnalyticsAdapter analyticsPortV4(
             KafkaTemplate<String, String> kafkaTemplate,
             ObjectMapper objectMapper) {
         return new KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);

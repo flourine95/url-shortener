@@ -1,7 +1,7 @@
 package com.example.urlshortener.infrastructure.persistence.repository;
 
-import com.example.urlshortener.domain.url.dto.VisitData;
 import com.example.urlshortener.domain.url.dto.UrlStats;
+import com.example.urlshortener.domain.url.dto.VisitData;
 import com.example.urlshortener.domain.url.repository.VisitDatabasePort;
 import com.example.urlshortener.infrastructure.persistence.entity.VisitEntity;
 import com.example.urlshortener.infrastructure.persistence.mapper.VisitMapper;

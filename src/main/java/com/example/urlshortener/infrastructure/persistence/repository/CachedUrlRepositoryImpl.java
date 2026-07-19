@@ -5,10 +5,10 @@ import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import com.example.urlshortener.infrastructure.cache.RedisUrlCacheService;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CachedUrlRepositoryImpl implements UrlRepository {
