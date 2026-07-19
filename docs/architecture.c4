@@ -62,7 +62,7 @@ model {
       }
 
       ports = component 'Domain Ports' {
-        description 'UrlRepository, AnalyticsPort, and VisitDatabasePort'
+        description 'UrlRepository and AnalyticsPort'
       }
 
       adapters = component 'Infrastructure Adapters' {
