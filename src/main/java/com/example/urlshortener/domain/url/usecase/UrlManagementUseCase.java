@@ -1,5 +1,6 @@
 package com.example.urlshortener.domain.url.usecase;
 
+import com.example.urlshortener.domain.url.UrlStatus;
 import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.exception.InvalidPaginationException;
 import com.example.urlshortener.domain.url.exception.InvalidUrlQueryException;
@@ -23,19 +24,19 @@ public class UrlManagementUseCase {
         if (page < 0 || size < 1 || size > 100) {
             throw new InvalidPaginationException();
         }
-        String normalizedStatus = normalizeStatus(status);
-        return urlRepository.findList(q, normalizedStatus, PageRequest.of(page, size, parseSort(sort)));
+        UrlStatus statusEnum = normalizeStatus(status);
+        return urlRepository.findList(q, statusEnum, PageRequest.of(page, size, parseSort(sort)));
     }
 
-    private String normalizeStatus(String status) {
+    private UrlStatus normalizeStatus(String status) {
         if (status == null || status.isBlank()) {
             return null;
         }
-        String normalized = status.trim().toLowerCase(Locale.ROOT);
-        if (!"active".equals(normalized) && !"expired".equals(normalized)) {
+        try {
+            return UrlStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
             throw new InvalidUrlQueryException("Status must be active or expired");
         }
-        return normalized;
     }
 
     private Sort parseSort(String sort) {

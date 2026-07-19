@@ -1,5 +1,6 @@
 package com.example.urlshortener.infrastructure.persistence.repository;
 
+import com.example.urlshortener.domain.url.UrlStatus;
 import com.example.urlshortener.domain.url.dto.UrlData;
 import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
@@ -49,7 +50,7 @@ public class CachedUrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
-    public Page<UrlListItem> findList(String q, String status, Pageable pageable) {
+    public Page<UrlListItem> findList(String q, UrlStatus status, Pageable pageable) {
         return delegate.findList(q, status, pageable);
     }
 

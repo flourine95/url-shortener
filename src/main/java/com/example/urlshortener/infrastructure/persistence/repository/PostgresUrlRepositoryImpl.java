@@ -1,5 +1,6 @@
 package com.example.urlshortener.infrastructure.persistence.repository;
 
+import com.example.urlshortener.domain.url.UrlStatus;
 import com.example.urlshortener.domain.url.dto.UrlData;
 import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
@@ -53,7 +54,7 @@ public class PostgresUrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
-    public Page<UrlListItem> findList(String q, String status, Pageable pageable) {
+    public Page<UrlListItem> findList(String q, UrlStatus status, Pageable pageable) {
         Specification<UrlEntity> specification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
             if (q != null && !q.isBlank()) {
@@ -63,12 +64,12 @@ public class PostgresUrlRepositoryImpl implements UrlRepository {
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("originalUrl")), pattern)
                 ));
             }
-            if ("active".equals(status)) {
+            if (UrlStatus.ACTIVE.equals(status)) {
                 predicates.add(criteriaBuilder.or(
                     criteriaBuilder.isNull(root.get("expiresAt")),
                     criteriaBuilder.greaterThan(root.get("expiresAt"), Instant.now())
                 ));
-            } else if ("expired".equals(status)) {
+            } else if (UrlStatus.EXPIRED.equals(status)) {
                 predicates.add(criteriaBuilder.and(
                     criteriaBuilder.isNotNull(root.get("expiresAt")),
                     criteriaBuilder.lessThanOrEqualTo(root.get("expiresAt"), Instant.now())
@@ -79,20 +80,20 @@ public class PostgresUrlRepositoryImpl implements UrlRepository {
 
         Page<UrlEntity> urls = jpaRepository.findAll(specification, pageable);
         List<String> shortCodes = urls.getContent().stream().map(UrlEntity::getShortCode).toList();
-        Map<String, VisitStatsProjection> stats = shortCodes.isEmpty()
+        Map<String, VisitStats> stats = shortCodes.isEmpty()
             ? Map.of()
             : new HashMap<>(visitJpaRepository.findStatsByShortCodes(shortCodes).stream()
-                .collect(Collectors.toMap(VisitStatsProjection::getShortCode, value -> value)));
+                .collect(Collectors.toMap(VisitStats::shortCode, value -> value)));
 
         return urls.map(url -> {
-            VisitStatsProjection stat = stats.get(url.getShortCode());
+            VisitStats stat = stats.get(url.getShortCode());
             return new UrlListItem(
                 url.getShortCode(),
                 url.getOriginalUrl(),
                 url.getExpiresAt(),
                 url.getCreatedAt(),
-                stat == null ? 0 : stat.getTotalClicks(),
-                stat == null ? null : stat.getLastClickedAt()
+                stat == null ? 0 : stat.totalClicks(),
+                stat == null ? null : stat.lastClickedAt()
             );
         });
     }

@@ -4,6 +4,7 @@ import com.example.urlshortener.domain.url.dto.CreateUrlCommand;
 import com.example.urlshortener.domain.url.dto.UrlData;
 import com.example.urlshortener.domain.url.dto.UrlListItem;
 import com.example.urlshortener.domain.url.exception.DomainException;
+import com.example.urlshortener.domain.url.UrlStatus;
 import com.example.urlshortener.domain.url.repository.UrlRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -86,7 +87,7 @@ class CreateUrlUseCaseTest {
         }
 
         @Override
-        public Page<UrlListItem> findList(String q, String status, Pageable pageable) {
+        public Page<UrlListItem> findList(String q, UrlStatus status, Pageable pageable) {
             return new PageImpl<>(List.of(), pageable, 0);
         }
 
