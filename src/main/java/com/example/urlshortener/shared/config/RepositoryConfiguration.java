@@ -7,7 +7,6 @@ import com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter;
 import com.example.urlshortener.infrastructure.persistence.repository.CachedUrlRepositoryImpl;
 import com.example.urlshortener.infrastructure.persistence.repository.NoopAnalyticsAdapter;
 import com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

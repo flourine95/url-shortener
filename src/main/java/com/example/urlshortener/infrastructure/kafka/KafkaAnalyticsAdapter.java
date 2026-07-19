@@ -2,11 +2,11 @@ package com.example.urlshortener.infrastructure.kafka;
 
 import com.example.urlshortener.domain.url.dto.VisitData;
 import com.example.urlshortener.domain.url.repository.AnalyticsPort;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @RequiredArgsConstructor
