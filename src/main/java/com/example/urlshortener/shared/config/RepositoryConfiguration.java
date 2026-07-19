@@ -7,7 +7,6 @@ import com.example.urlshortener.infrastructure.kafka.KafkaAnalyticsAdapter;
 import com.example.urlshortener.infrastructure.persistence.repository.CachedUrlRepositoryImpl;
 import com.example.urlshortener.infrastructure.persistence.repository.NoopAnalyticsAdapter;
 import com.example.urlshortener.infrastructure.persistence.repository.SyncAnalyticsAdapter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 public class RepositoryConfiguration {
@@ -54,10 +54,5 @@ public class RepositoryConfiguration {
             ObjectMapper objectMapper) {
         return new KafkaAnalyticsAdapter(kafkaTemplate, objectMapper);
     }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule());
-    }
 }
+
